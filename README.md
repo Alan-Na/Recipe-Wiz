@@ -6,7 +6,7 @@ Recipe Wiz is an innovative meal planning and recipe management application desi
 
 ## Contents
 
-1. [Authors and contributors](#Authors-and-contributors)
+1. [Author](#Author)
 2. [Key Features](#Key-Features)
 2. [Installation Instructions](#Installation-Instructions)
 3. [Usage Guide](#usage-guide)
@@ -15,15 +15,9 @@ Recipe Wiz is an innovative meal planning and recipe management application desi
 6. [How to Contribute](#how-to-contribute)
 7. [API USAGE](#API-USAGE)
 
-## Authors and contributors
-- Haris Anjum 
-  - (@hanjum66)
-- Jongyoon Baek 
-  - (@KaiBaek)
+## Author
 - Xineng Na 
   - (@Alan-Na)
-- Yujie Zeng 
-  - (@Jerry-Zeng-UofT)
 
 ## Key Features
 
@@ -66,7 +60,7 @@ Before installing Recipe Wiz, ensure your system meets the following requirement
 1. **Clone main branch of the Repository**
 
    ```bash
-   git clone https://github.com/Jerry-Zeng-UofT/Group-project-209.git
+   git clone https://github.com/Alan-Na/Recipe-Wiz.git
    
 2. **Open the Project in IntelliJ IDEA**
 
@@ -103,29 +97,29 @@ Before installing Recipe Wiz, ensure your system meets the following requirement
 
 The moment you run the program, you should see the front page view. If you click “Recipe Search” in that window, you'll be taken to a recipe search window, and if you click Meal planner, you'll see a meal planning calendar.
 
-![frontpageview.png](src/main/java/resources/frontpageview.png)
+![frontpageview.png](main/java/resources/frontpageview.png)
 
 ### How to use Recipe Search
 
 1. You can add an ingredient to the ingredients panel by writing it in the ingredient field and hitting the add ingredient button. Conversely, you can remove an ingredient from the ingredients pane by selecting it in the ingredients panel and pressing the remove ingredient button.
 
-![readme1.png](src/main/java/resources/readme1.png)
+![readme1.png](main/java/resources/readme1.png)
 
 2. You can filter your recipe search by pressing the add restriction button. This button will open a filter frame window where you can select Diet Label, Health Label, Cuisine Type, etc. in the pop-up window. You can remove a restriction from the restrictions panel by selecting it in the same way as remove ingredient and clicking the remove restriction button.
 
-![readme2.png](src/main/java/resources/readme2.png)
+![readme2.png](main/java/resources/readme2.png)
 
 3. The Search button allows you to search for recipes based on the given ingredients and restrictions.
 
-![readme3.png](src/main/java/resources/readme3.png)
+![readme3.png](main/java/resources/readme3.png)
 
 4. If you enter a number in the servings field and then update, the recipe results in the results panel will change to match the given servings value.
 
-![readme4.png](src/main/java/resources/readme4.png)
+![readme4.png](main/java/resources/readme4.png)
 
 5. If the analyze nutrition button is pressed after selecting a specific recipe, the user can view the nutritional information for that specific recipe.
 
-![readme5.png](src/main/java/resources/readme5.png)
+![readme5.png](main/java/resources/readme5.png)
 
 6. When you press the Save Recipe button, a specific recipe is saved to your meal planning calendar.
 
@@ -139,7 +133,7 @@ The moment you run the program, you should see the front page view. If you click
 
 3. Recipes saved in the meal planning calendar will remain as separate json files even after the program is terminated, and when the user runs the program again, the previously saved meal planning calendar will be loaded.
 
-![readme6.png](src/main/java/resources/readme6.png)
+![readme6.png](main/java/resources/readme6.png)
 
 ## License
 - This project is licensed under the **MIT License**, which means you are free to:
@@ -160,12 +154,12 @@ We value your input and encourage you to provide feedback to help us improve Rec
 
 1. **GitHub Issues** 
 
-    - Submit feedback, report bugs, or suggest new features by creating an issue in the GitHub [Issues](https://github.com/Jerry-Zeng-UofT/Group-project-209/issues) section.
+    - Submit feedback, report bugs, or suggest new features by creating an issue in the GitHub [Issues](https://github.com/Alan-Na/Recipe-Wiz/issues) section.
 
 
 2. **Discussion Board**
 
-   - Join discussions with the community and developers in our GitHub [Discussions](https://github.com/Jerry-Zeng-UofT/Group-project-209/discussions)
+   - Join discussions with the community and developers in our GitHub [Discussions](https://github.com/Alan-Na/Recipe-Wiz/discussions)
 
 ### Feedback Guidelines
 
@@ -195,7 +189,7 @@ We welcome contributions from the community to improve Recipe Wiz!
 2. **Clone Your Fork**
 
     ```bash
-   git clone https://github.com/your-username/Group-project-209.git
+   git clone https://github.com/your-username/Recipe-Wiz.git
 3. **Create a New Branch**
 
     - Create a branch where you make fixes.
