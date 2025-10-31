@@ -97,29 +97,29 @@ Before installing Recipe Wiz, ensure your system meets the following requirement
 
 The moment you run the program, you should see the front page view. If you click “Recipe Search” in that window, you'll be taken to a recipe search window, and if you click Meal planner, you'll see a meal planning calendar.
 
-![frontpageview.png](main/java/resources/frontpageview.png)
+![frontview.png](main/resources/frontview.png)
 
 ### How to use Recipe Search
 
 1. You can add an ingredient to the ingredients panel by writing it in the ingredient field and hitting the add ingredient button. Conversely, you can remove an ingredient from the ingredients pane by selecting it in the ingredients panel and pressing the remove ingredient button.
 
-![readme1.png](main/java/resources/readme1.png)
+![readme1.png](main/resources/add.png)
 
 2. You can filter your recipe search by pressing the add restriction button. This button will open a filter frame window where you can select Diet Label, Health Label, Cuisine Type, etc. in the pop-up window. You can remove a restriction from the restrictions panel by selecting it in the same way as remove ingredient and clicking the remove restriction button.
 
-![readme2.png](main/java/resources/readme2.png)
+![readme2.png](main/resources/filter.png)
 
 3. The Search button allows you to search for recipes based on the given ingredients and restrictions.
 
-![readme3.png](main/java/resources/readme3.png)
+![readme3.png](main/resources/search.png)
 
 4. If you enter a number in the servings field and then update, the recipe results in the results panel will change to match the given servings value.
 
-![readme4.png](main/java/resources/readme4.png)
+![readme4.png](main/resources/servings.png)
 
 5. If the analyze nutrition button is pressed after selecting a specific recipe, the user can view the nutritional information for that specific recipe.
 
-![readme5.png](main/java/resources/readme5.png)
+![readme5.png](main/resources/info.png)
 
 6. When you press the Save Recipe button, a specific recipe is saved to your meal planning calendar.
 
