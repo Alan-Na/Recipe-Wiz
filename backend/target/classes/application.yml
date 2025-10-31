@@ -1,0 +1,22 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlite:recipe_wiz.db
+    driver-class-name: org.sqlite.JDBC
+  jackson:
+    serialization:
+      INDENT_OUTPUT: true
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.jdbc.JdbcRepositoriesAutoConfiguration
+
+recipewiz:
+  edamam:
+    recipe-search:
+      app-id: ${RECIPE_APP_ID:}
+      app-key: ${RECIPE_APP_KEY:}
+    nutrition-analysis:
+      app-id: ${NA_APP_ID:}
+      app-key: ${NA_APP_KEY:}

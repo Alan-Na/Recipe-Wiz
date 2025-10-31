@@ -1,0 +1,8 @@
+recipewiz:
+  edamam:
+    recipe-search:
+      app-id: ${RECIPE_APP_ID:demo}
+      app-key: ${RECIPE_APP_KEY:demo}
+    nutrition-analysis:
+      app-id: ${NA_APP_ID:demo}
+      app-key: ${NA_APP_KEY:demo}
