@@ -29,6 +29,8 @@ public class SavedRecipesDataAccessObject implements SavedRecipesDataAccessInter
         if (recipe == null) {
             throw new IllegalArgumentException("Recipe cannot be null");
         }
+
+        databaseManager.ensureUserExists(userId);
         
         String sql = "INSERT OR REPLACE INTO saved_recipes (user_id, recipe_id, recipe_data) VALUES (?, ?, ?)";
         try (Connection conn = databaseManager.getConnection();

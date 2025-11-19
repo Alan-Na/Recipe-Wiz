@@ -2,6 +2,7 @@ package data_access;
 
 import jakarta.annotation.PostConstruct;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
@@ -33,6 +34,21 @@ public class DatabaseManager {
             statement.execute("PRAGMA foreign_keys = ON;");
         }
         return connection;
+    }
+
+    /**
+     * Ensure a user record exists; used to avoid foreign key errors for demo/test user IDs.
+     * @param userId the user ID that should be present
+     */
+    public void ensureUserExists(int userId) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "INSERT OR IGNORE INTO users (user_id, username) VALUES (?, 'default_user')")) {
+            statement.setInt(1, userId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            LOGGER.error("确保用户 {} 存在时出错: {}", userId, e.getMessage(), e);
+        }
     }
 
     /**
@@ -91,6 +107,8 @@ public class DatabaseManager {
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_saved_recipes_user_id ON saved_recipes(user_id)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_meal_plan_user_date ON meal_plan_entries(user_id, meal_date)");
 
+            // Ensure a default user exists for demo/testing flows that assume user ID 1
+            stmt.executeUpdate("INSERT OR IGNORE INTO users (user_id, username) VALUES (1, 'default_user')");
             LOGGER.info("数据库初始化完成");
         } catch (SQLException e) {
             LOGGER.error("数据库初始化失败: {}", e.getMessage(), e);
