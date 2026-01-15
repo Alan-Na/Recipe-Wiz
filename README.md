@@ -119,8 +119,6 @@ The moment you run the program, you should see the front page view. If you click
 
 5. If the analyze nutrition button is pressed after selecting a specific recipe, the user can view the nutritional information for that specific recipe.
 
-![readme5.png](resources/info.png)
-
 6. When you press the Save Recipe button, a specific recipe is saved to your meal planning calendar.
 
 
