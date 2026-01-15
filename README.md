@@ -187,7 +187,7 @@ We welcome contributions from the community to improve Recipe Wiz!
 2. **Clone Your Fork**
 
     ```bash
-   git clone https://github.com/your-username/Recipe-Wiz.git
+   git clone https://github.com/Alan-Na/Recipe-Wiz.git
 3. **Create a New Branch**
 
     - Create a branch where you make fixes.
