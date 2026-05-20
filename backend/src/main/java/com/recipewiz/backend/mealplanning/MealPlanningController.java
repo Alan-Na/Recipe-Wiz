@@ -1,6 +1,9 @@
 package com.recipewiz.backend.mealplanning;
 
 import com.recipewiz.backend.mealplanning.dto.AddMealPlanEntryRequest;
+import com.recipewiz.backend.mealplanning.dto.AiMealPlanConfirmRequest;
+import com.recipewiz.backend.mealplanning.dto.AiMealPlanPreviewDto;
+import com.recipewiz.backend.mealplanning.dto.AiMealPlanRequest;
 import com.recipewiz.backend.mealplanning.dto.MealPlanEntryDto;
 import com.recipewiz.backend.mealplanning.dto.UpdateMealStatusRequest;
 import com.recipewiz.backend.recipe.dto.RecipeDto;
@@ -25,9 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class MealPlanningController {
 
     private final MealPlanningService mealPlanningService;
+    private final AiMealPlanService aiMealPlanService;
 
-    public MealPlanningController(MealPlanningService mealPlanningService) {
+    public MealPlanningController(MealPlanningService mealPlanningService,
+                                   AiMealPlanService aiMealPlanService) {
         this.mealPlanningService = mealPlanningService;
+        this.aiMealPlanService = aiMealPlanService;
     }
 
     @GetMapping
@@ -61,5 +67,30 @@ public class MealPlanningController {
     @GetMapping("/saved-recipes")
     public List<RecipeDto> getSavedRecipes(@PathVariable int userId) {
         return mealPlanningService.getSavedRecipes(userId);
+    }
+
+    // ── AI Meal Planner endpoints ──────────────────────────────────────────
+
+    /**
+     * Generates an AI meal plan preview from today to end of the current week.
+     * Returns validated entries with full recipe details — does NOT write to DB yet.
+     */
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/ai/generate")
+    public AiMealPlanPreviewDto generateAiPlan(
+            @PathVariable int userId,
+            @Valid @RequestBody AiMealPlanRequest request) {
+        return aiMealPlanService.generatePreview(userId, request);
+    }
+
+    /**
+     * Bulk-writes the user-approved preview entries to the meal plan table.
+     */
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/ai/confirm")
+    public void confirmAiPlan(
+            @PathVariable int userId,
+            @Valid @RequestBody AiMealPlanConfirmRequest request) {
+        aiMealPlanService.confirmPlan(userId, request);
     }
 }

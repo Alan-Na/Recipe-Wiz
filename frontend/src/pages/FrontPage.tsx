@@ -1,10 +1,9 @@
-import { Box, Button, Grid, GridItem, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
+import { Box, Button, Grid, Heading, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 
-const MotionBox  = motion(Box);
-const MotionText = motion(Text);
+const MotionBox = motion(Box);
 
 const FEATURE_ICONS = ['🔍', '📊', '📅', '⚖️'];
 

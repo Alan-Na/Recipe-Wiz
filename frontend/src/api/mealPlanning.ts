@@ -1,6 +1,9 @@
 import { apiClient } from './client';
 import type {
   AddMealPlanEntryRequest,
+  AiMealPlanConfirmRequest,
+  AiMealPlanPreviewDto,
+  AiMealPlanRequest,
   MealPlanEntryDto,
   RecipeDto,
   UpdateMealStatusRequest,
@@ -39,4 +42,25 @@ export const updateMealStatus = async (
 export const getSavedRecipesForMealPlan = async (userId: number): Promise<RecipeDto[]> => {
   const response = await apiClient.get<RecipeDto[]>(`/api/users/${userId}/meal-plan/saved-recipes`);
   return response.data;
+};
+
+// ── AI Meal Planner ────────────────────────────────────────────────────────
+
+export const generateAiMealPlan = async (
+  userId: number,
+  payload: AiMealPlanRequest,
+): Promise<AiMealPlanPreviewDto> => {
+  const response = await apiClient.post<AiMealPlanPreviewDto>(
+    `/api/users/${userId}/meal-plan/ai/generate`,
+    payload,
+    { timeout: 90_000 }, // DeepSeek may be slow; override default 15s
+  );
+  return response.data;
+};
+
+export const confirmAiMealPlan = async (
+  userId: number,
+  payload: AiMealPlanConfirmRequest,
+): Promise<void> => {
+  await apiClient.post(`/api/users/${userId}/meal-plan/ai/confirm`, payload);
 };

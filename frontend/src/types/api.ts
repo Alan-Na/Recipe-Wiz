@@ -55,3 +55,32 @@ export interface ServingAdjustRequest {
   newServings: number;
   recipes: RecipeDto[];
 }
+
+// ── AI Meal Planner ────────────────────────────────────────────────────────
+
+export interface AiMealPlanRequest {
+  gender: number;     // 1 = Male, 2 = Female
+  heightCm: number;
+  weightKg: number;
+  age: number;
+  goal: string;
+}
+
+export interface AiMealPlanEntryPreview {
+  recipeId: number;
+  recipe: RecipeDto;
+  mealDate: string;   // YYYY-MM-DD
+  mealType: string;
+}
+
+export interface AiMealPlanPreviewDto {
+  entries: AiMealPlanEntryPreview[];
+}
+
+export interface AiMealPlanConfirmRequest {
+  entries: Array<{
+    recipeId: number;
+    mealDate: string;
+    mealType: string;
+  }>;
+}

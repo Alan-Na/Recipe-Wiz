@@ -1,6 +1,6 @@
 import {
   Box, Button, Flex, List, ListItem, Modal, ModalBody, ModalCloseButton,
-  ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text,
+  ModalContent, ModalFooter, ModalOverlay, Spinner, Text,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';

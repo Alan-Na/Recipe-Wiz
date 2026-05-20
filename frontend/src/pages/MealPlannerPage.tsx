@@ -12,6 +12,7 @@ import { WeekNavigator } from '../features/meal-planning/components/WeekNavigato
 import { MealPlanCalendar } from '../features/meal-planning/components/MealPlanCalendar';
 import { SavedRecipesPanel } from '../features/meal-planning/components/SavedRecipesPanel';
 import { AddMealModal } from '../features/meal-planning/components/AddMealModal';
+import { AiMealPlannerPanel } from '../features/meal-planning/components/AiMealPlannerPanel';
 
 const MotionBox = motion(Box);
 
@@ -26,8 +27,11 @@ export const MealPlannerPage = () => {
 
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
 
-  const { mealPlan, isMealPlanLoading, savedRecipes, isSavedRecipesLoading, addMeal, removeMeal, updateMealStatus } =
-    useMealPlanning(weekStart);
+  const {
+    mealPlan, isMealPlanLoading, savedRecipes, isSavedRecipesLoading,
+    addMeal, removeMeal, updateMealStatus,
+    generateAiPlan, confirmAiPlan, isGeneratingAiPlan, isConfirmingAiPlan,
+  } = useMealPlanning(weekStart);
 
   const handlePreviousWeek = () => setWeekStart((prev) => getWeekStart(prev.subtract(7, 'day')));
   const handleNextWeek    = () => setWeekStart((prev) => getWeekStart(prev.add(7, 'day')));
@@ -128,8 +132,19 @@ export const MealPlannerPage = () => {
           </Flex>
         </MotionBox>
 
+        {/* AI Meal Planner Panel */}
+        <MotionBox initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}>
+          <AiMealPlannerPanel
+            savedRecipesCount={savedRecipes.length}
+            onGenerate={generateAiPlan}
+            onConfirm={confirmAiPlan}
+            isGenerating={isGeneratingAiPlan}
+            isConfirming={isConfirmingAiPlan}
+          />
+        </MotionBox>
+
         {/* Week navigator */}
-        <MotionBox initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.12 }}>
+        <MotionBox initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 }}>
           <WeekNavigator
             weekStart={weekStart}
             onPreviousWeek={handlePreviousWeek}

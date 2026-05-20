@@ -20,3 +20,5 @@ recipewiz:
     nutrition-analysis:
       app-id: ${NA_APP_ID:57b74073}
       app-key: ${NA_APP_KEY:89370c3925032d1dd958c3d1df8ac314}
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY:}

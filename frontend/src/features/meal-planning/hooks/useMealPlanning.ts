@@ -2,12 +2,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Dayjs } from 'dayjs';
 import {
   addMealPlanEntry,
+  confirmAiMealPlan,
+  generateAiMealPlan,
   getMealPlanWeek,
   getSavedRecipesForMealPlan,
   removeMealPlanEntry,
   updateMealStatus,
 } from '../../../api/mealPlanning';
-import type { AddMealPlanEntryRequest, MealPlanEntryDto } from '../../../types/api';
+import type {
+  AddMealPlanEntryRequest,
+  AiMealPlanConfirmRequest,
+  AiMealPlanRequest,
+  MealPlanEntryDto,
+} from '../../../types/api';
 
 const USER_ID = 1;
 
@@ -47,6 +54,15 @@ export const useMealPlanning = (weekStart: Dayjs) => {
     onSuccess: invalidateMealPlan,
   });
 
+  const generateAiPlanMutation = useMutation({
+    mutationFn: (payload: AiMealPlanRequest) => generateAiMealPlan(USER_ID, payload),
+  });
+
+  const confirmAiPlanMutation = useMutation({
+    mutationFn: (payload: AiMealPlanConfirmRequest) => confirmAiMealPlan(USER_ID, payload),
+    onSuccess: invalidateMealPlan,
+  });
+
   return {
     mealPlan: (mealPlanQuery.data ?? []) as MealPlanEntryDto[],
     isMealPlanLoading: mealPlanQuery.isLoading,
@@ -59,5 +75,9 @@ export const useMealPlanning = (weekStart: Dayjs) => {
     addMealStatus: addMealMutation.status,
     removeMealStatus: removeMealMutation.status,
     updateMealStatusState: updateStatusMutation.status,
+    generateAiPlan: generateAiPlanMutation.mutateAsync,
+    confirmAiPlan: confirmAiPlanMutation.mutateAsync,
+    isGeneratingAiPlan: generateAiPlanMutation.isPending,
+    isConfirmingAiPlan: confirmAiPlanMutation.isPending,
   };
 };
