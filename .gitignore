@@ -1,0 +1,29 @@
+# Maven build output
+backend/target/
+
+# Compiled class files
+*.class
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# SQLite database (local data, not source code)
+*.db
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
