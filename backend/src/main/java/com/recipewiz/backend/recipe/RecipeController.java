@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,5 +53,11 @@ public class RecipeController {
     @GetMapping("/users/{userId}/recipes")
     public List<RecipeDto> getSavedRecipes(@PathVariable int userId) {
         return recipeService.getSavedRecipes(userId);
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/users/{userId}/recipes/{recipeId}")
+    public void deleteRecipe(@PathVariable int userId, @PathVariable int recipeId) {
+        recipeService.deleteRecipe(userId, recipeId);
     }
 }

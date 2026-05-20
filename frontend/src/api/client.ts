@@ -7,5 +7,7 @@ export const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 15000,
+  // 90 s — matches the backend OkHttp read timeout so Edamam / DeepSeek
+  // responses are never cut off on the frontend side first.
+  timeout: 90_000,
 });

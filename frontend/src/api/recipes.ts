@@ -22,6 +22,10 @@ export const saveRecipe = async (userId: number, recipe: RecipeDto): Promise<voi
   await apiClient.post(`/api/users/${userId}/recipes`, { recipe });
 };
 
+export const deleteSavedRecipe = async (userId: number, recipeId: number): Promise<void> => {
+  await apiClient.delete(`/api/users/${userId}/recipes/${recipeId}`);
+};
+
 export const getSavedRecipes = async (userId: number): Promise<RecipeDto[]> => {
   const response = await apiClient.get<RecipeDto[]>(`/api/users/${userId}/recipes`);
   return response.data;

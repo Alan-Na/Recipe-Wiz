@@ -61,6 +61,10 @@ export const MealPlanCalendar = ({
         const dateLabel = isZh ? day.format('M月D日') : day.format('MMM D');
         const dayLabel  = isZh ? day.format('ddd')   : day.format('ddd');
 
+        const totalCalories = dayEntries.reduce(
+          (sum, e) => sum + (e.recipe.nutrition?.calories ?? 0), 0,
+        );
+
         return (
           <MotionBox
             key={day.toISOString()}
@@ -116,6 +120,32 @@ export const MealPlanCalendar = ({
                   >
                     {t('mealPlanCalendar.today')}
                   </Badge>
+                )}
+
+                {/* Daily calorie total — only when meals exist */}
+                {dayEntries.length > 0 && (
+                  <Flex
+                    align="center"
+                    gap={1}
+                    mt={2}
+                    bg={isToday ? 'whiteAlpha.200' : 'orange.50'}
+                    borderRadius="lg"
+                    px={2}
+                    py={1}
+                  >
+                    <Text fontSize="2xs" lineHeight={1}>🔥</Text>
+                    <Text
+                      fontSize="2xs"
+                      fontWeight={800}
+                      color={isToday ? 'white' : 'orange.500'}
+                      lineHeight={1}
+                    >
+                      {Math.round(totalCalories)}{' '}
+                      <Box as="span" fontWeight={500} opacity={0.8}>
+                        {t('mealPlanCalendar.kcal')}
+                      </Box>
+                    </Text>
+                  </Flex>
                 )}
               </Box>
 

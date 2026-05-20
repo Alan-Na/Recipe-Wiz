@@ -86,6 +86,10 @@ public class RecipeService {
         interactor.saveRecipe(userId, recipe);
     }
 
+    public void deleteRecipe(int userId, int recipeId) {
+        savedRecipesGateway.removeRecipe(userId, recipeId);
+    }
+
     public List<RecipeDto> getSavedRecipes(int userId) {
         final List<Recipe> recipes = savedRecipesGateway.getSavedRecipes(userId);
         final List<RecipeDto> result = new ArrayList<>();

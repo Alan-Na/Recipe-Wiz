@@ -30,6 +30,7 @@ export const MealPlannerPage = () => {
   const {
     mealPlan, isMealPlanLoading, savedRecipes, isSavedRecipesLoading,
     addMeal, removeMeal, updateMealStatus,
+    deleteSavedRecipe, deletingSavedRecipeId,
     generateAiPlan, confirmAiPlan, isGeneratingAiPlan, isConfirmingAiPlan,
   } = useMealPlanning(weekStart);
 
@@ -170,6 +171,13 @@ export const MealPlannerPage = () => {
             recipes={savedRecipes}
             isLoading={isSavedRecipesLoading}
             onAdd={(recipe) => setSelectedRecipe(recipe)}
+            onDelete={(recipeId) => deleteSavedRecipe(recipeId).catch(() => toast({
+              title: t('savedRecipesPanel.deleteFailed'),
+              status: 'error',
+              duration: 3000,
+              isClosable: true,
+            }))}
+            deletingRecipeId={deletingSavedRecipeId}
           />
         </Flex>
       </Stack>

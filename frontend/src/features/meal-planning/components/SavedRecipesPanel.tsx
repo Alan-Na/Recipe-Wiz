@@ -1,6 +1,7 @@
 import {
-  Box, Button, Flex, Spinner, Stack, Text, VStack,
+  Box, Button, Flex, IconButton, Spinner, Stack, Text, Tooltip, VStack,
 } from '@chakra-ui/react';
+import { DeleteIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { RecipeDto } from '../../../types/api';
@@ -11,6 +12,8 @@ interface SavedRecipesPanelProps {
   recipes: RecipeDto[];
   isLoading: boolean;
   onAdd: (recipe: RecipeDto) => void;
+  onDelete: (recipeId: number) => void;
+  deletingRecipeId?: number | null;
 }
 
 const PANEL_GRADIENTS = [
@@ -23,7 +26,9 @@ const PANEL_GRADIENTS = [
 const cardGradient = (title: string) =>
   PANEL_GRADIENTS[title.charCodeAt(0) % PANEL_GRADIENTS.length];
 
-export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPanelProps) => {
+export const SavedRecipesPanel = ({
+  recipes, isLoading, onAdd, onDelete, deletingRecipeId,
+}: SavedRecipesPanelProps) => {
   const { t } = useTranslation();
 
   return (
@@ -67,48 +72,76 @@ export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPan
         ) : (
           <Stack spacing={3}>
             <AnimatePresence>
-              {recipes.map((recipe, i) => (
-                <MotionBox
-                  key={recipe.recipeId}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: i * 0.06 }}
-                >
-                  <Box
-                    borderRadius="xl"
-                    overflow="hidden"
-                    border="1px solid"
-                    borderColor="gray.100"
-                    _hover={{ shadow: 'md', transform: 'translateY(-2px)' }}
-                    transition="all 0.2s"
+              {recipes.map((recipe, i) => {
+                const isDeleting = deletingRecipeId === recipe.recipeId;
+                return (
+                  <MotionBox
+                    key={recipe.recipeId}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 40, transition: { duration: 0.2 } }}
+                    transition={{ duration: 0.3, delay: i * 0.06 }}
+                    layout
                   >
-                    {/* Mini gradient accent */}
-                    <Box h="3px" bgGradient={cardGradient(recipe.title)} />
-                    <Box p={3}>
-                      <Text fontWeight={700} fontSize="sm" color="gray.800" noOfLines={1} mb={0.5}>
-                        {recipe.title}
-                      </Text>
-                      <Text fontSize="xs" color="gray.400" noOfLines={2} lineHeight={1.5} mb={3}>
-                        {recipe.description}
-                      </Text>
-                      <Button
-                        size="sm"
-                        colorScheme="orange"
-                        variant="outline"
-                        borderRadius="lg"
-                        fontWeight={700}
-                        onClick={() => onAdd(recipe)}
-                        w="full"
-                        leftIcon={<Text as="span" fontSize="xs">📅</Text>}
-                        _hover={{ bg: 'orange.50', transform: 'translateY(-1px)' }}
-                        transition="all 0.2s"
-                      >
-                        {t('savedRecipesPanel.addToCalendar')}
-                      </Button>
+                    <Box
+                      borderRadius="xl"
+                      overflow="hidden"
+                      border="1px solid"
+                      borderColor="gray.100"
+                      opacity={isDeleting ? 0.5 : 1}
+                      _hover={{ shadow: isDeleting ? 'none' : 'md', transform: isDeleting ? 'none' : 'translateY(-2px)' }}
+                      transition="all 0.2s"
+                    >
+                      {/* Mini gradient accent */}
+                      <Box h="3px" bgGradient={cardGradient(recipe.title)} />
+
+                      <Box p={3}>
+                        {/* Title row with delete button */}
+                        <Flex align="flex-start" justify="space-between" gap={2} mb={0.5}>
+                          <Text fontWeight={700} fontSize="sm" color="gray.800" noOfLines={1} flex={1}>
+                            {recipe.title}
+                          </Text>
+                          <Tooltip label={t('savedRecipesPanel.delete')} hasArrow placement="left">
+                            <IconButton
+                              aria-label={t('savedRecipesPanel.delete')}
+                              icon={<DeleteIcon />}
+                              size="xs"
+                              variant="ghost"
+                              colorScheme="red"
+                              borderRadius="lg"
+                              isLoading={isDeleting}
+                              isDisabled={!!deletingRecipeId && !isDeleting}
+                              onClick={() => onDelete(recipe.recipeId)}
+                              flexShrink={0}
+                              _hover={{ bg: 'red.50' }}
+                            />
+                          </Tooltip>
+                        </Flex>
+
+                        <Text fontSize="xs" color="gray.400" noOfLines={2} lineHeight={1.5} mb={3}>
+                          {recipe.description}
+                        </Text>
+
+                        <Button
+                          size="sm"
+                          colorScheme="orange"
+                          variant="outline"
+                          borderRadius="lg"
+                          fontWeight={700}
+                          onClick={() => onAdd(recipe)}
+                          w="full"
+                          leftIcon={<Text as="span" fontSize="xs">📅</Text>}
+                          isDisabled={!!deletingRecipeId}
+                          _hover={{ bg: 'orange.50', transform: 'translateY(-1px)' }}
+                          transition="all 0.2s"
+                        >
+                          {t('savedRecipesPanel.addToCalendar')}
+                        </Button>
+                      </Box>
                     </Box>
-                  </Box>
-                </MotionBox>
-              ))}
+                  </MotionBox>
+                );
+              })}
             </AnimatePresence>
           </Stack>
         )}

@@ -3,7 +3,7 @@ import {
   TagCloseButton, TagLabel, Text, useDisclosure, useToast, VStack,
 } from '@chakra-ui/react';
 import { useMutation } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
@@ -25,16 +25,52 @@ const TAG_TYPE_COLORS: Record<string, string> = {
   diet: 'green', health: 'teal', cuisine: 'purple',
 };
 
+// ── Session-storage helpers ───────────────────────────────────────────────
+const KEYS = {
+  ingredients:  'rw:search:ingredients',
+  restrictions: 'rw:search:restrictions',
+  recipes:      'rw:search:recipes',
+} as const;
+
+function readSession<T>(key: string, fallback: T): T {
+  try {
+    const raw = sessionStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeSession(key: string, value: unknown): void {
+  try { sessionStorage.setItem(key, JSON.stringify(value)); } catch { /* quota / private-mode */ }
+}
+
+// ── Component ─────────────────────────────────────────────────────────────
+
 export const RecipeSearchPage = () => {
-  const [ingredients, setIngredients] = useState<string[]>([]);
-  const [restrictions, setRestrictions] = useState<SearchRestrictions>(DEFAULT_RESTRICTIONS);
-  const [recipes, setRecipes] = useState<RecipeDto[]>([]);
+  // Initialise state from sessionStorage so navigating away and back keeps results
+  const [ingredients, setIngredients] = useState<string[]>(() =>
+    readSession(KEYS.ingredients, []),
+  );
+  const [restrictions, setRestrictions] = useState<SearchRestrictions>(() =>
+    readSession(KEYS.restrictions, DEFAULT_RESTRICTIONS),
+  );
+  const [recipes, setRecipes] = useState<RecipeDto[]>(() =>
+    readSession(KEYS.recipes, []),
+  );
   const [selectedRecipe, setSelectedRecipe] = useState<RecipeDto | undefined>(undefined);
+
+  // Sync state changes back to sessionStorage
+  useEffect(() => { writeSession(KEYS.ingredients,  ingredients);  }, [ingredients]);
+  useEffect(() => { writeSession(KEYS.restrictions, restrictions); }, [restrictions]);
+  useEffect(() => { writeSession(KEYS.recipes,      recipes);      }, [recipes]);
 
   const restrictionDrawer = useDisclosure();
   const nutritionModal = useDisclosure();
   const toast = useToast();
   const { t } = useTranslation();
+
+  // ── Mutations ──────────────────────────────────────────────────────────
 
   const searchMutation = useMutation({
     mutationFn: async (payload: { ingredients: string[]; restrictions: SearchRestrictions }) => {
@@ -57,7 +93,16 @@ export const RecipeSearchPage = () => {
       }
     },
     onError: (error: unknown) => {
-      toast({ title: t('recipeSearch.toast.searchFailed'), description: error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain'), status: 'error', duration: 4000, isClosable: true });
+      const isTimeout = error instanceof Error && error.message.toLowerCase().includes('timeout');
+      toast({
+        title: isTimeout ? t('recipeSearch.toast.searchTimeout') : t('recipeSearch.toast.searchFailed'),
+        description: isTimeout
+          ? t('recipeSearch.toast.searchTimeoutDesc')
+          : (error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain')),
+        status: 'error',
+        duration: 6000,
+        isClosable: true,
+      });
     },
   });
 
@@ -92,12 +137,14 @@ export const RecipeSearchPage = () => {
     },
   });
 
-  const handleAddIngredient = (ingredient: string) => {
+  // ── Handlers ───────────────────────────────────────────────────────────
+
+  const handleAddIngredient = (ingredient: string) =>
     setIngredients((prev) => (prev.includes(ingredient) ? prev : [...prev, ingredient]));
-  };
-  const handleRemoveIngredient = (ingredient: string) => {
+
+  const handleRemoveIngredient = (ingredient: string) =>
     setIngredients((prev) => prev.filter((item) => item !== ingredient));
-  };
+
   const handleSearch = () => {
     if (ingredients.length === 0) {
       toast({ title: t('recipeSearch.toast.addIngredient'), status: 'warning', duration: 3000, isClosable: true });
@@ -105,6 +152,14 @@ export const RecipeSearchPage = () => {
     }
     searchMutation.mutate({ ingredients, restrictions });
   };
+
+  /** Clears cached results so the user can start fresh without reloading the page. */
+  const handleClearResults = () => {
+    setRecipes([]);
+    setIngredients([]);
+    setRestrictions(DEFAULT_RESTRICTIONS);
+  };
+
   const handleAnalyze = (recipe: RecipeDto) => {
     setSelectedRecipe(recipe);
     nutritionMutation.reset();
@@ -112,17 +167,21 @@ export const RecipeSearchPage = () => {
     nutritionMutation.mutate(recipe);
   };
 
+  // ── Derived ────────────────────────────────────────────────────────────
+
   const TAG_TYPE_KEYS = {
-    diet: t('recipeSearch.tagType.diet'),
-    health: t('recipeSearch.tagType.health'),
+    diet:    t('recipeSearch.tagType.diet'),
+    health:  t('recipeSearch.tagType.health'),
     cuisine: t('recipeSearch.tagType.cuisine'),
   };
 
   const appliedTags = [
-    ...restrictions.diet.map((v) => ({ type: 'diet' as const, label: TAG_TYPE_KEYS.diet, value: v })),
-    ...restrictions.health.map((v) => ({ type: 'health' as const, label: TAG_TYPE_KEYS.health, value: v })),
+    ...restrictions.diet.map((v)    => ({ type: 'diet'    as const, label: TAG_TYPE_KEYS.diet,    value: v })),
+    ...restrictions.health.map((v)  => ({ type: 'health'  as const, label: TAG_TYPE_KEYS.health,  value: v })),
     ...restrictions.cuisine.map((v) => ({ type: 'cuisine' as const, label: TAG_TYPE_KEYS.cuisine, value: v })),
   ];
+
+  // ── Render ─────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -130,23 +189,43 @@ export const RecipeSearchPage = () => {
 
         {/* Page header */}
         <MotionBox initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
-          <VStack align="flex-start" spacing={1}>
-            <HStack spacing={2}>
-              <Text fontSize="2xl">🔍</Text>
-              <Heading
-                fontSize={{ base: '2xl', md: '3xl' }}
-                fontWeight={900}
-                letterSpacing="-0.5px"
-                bgGradient="linear(to-r, teal.600, teal.400)"
-                bgClip="text"
+          <Flex align="flex-end" justify="space-between" flexWrap="wrap" gap={3}>
+            <VStack align="flex-start" spacing={1}>
+              <HStack spacing={2}>
+                <Text fontSize="2xl">🔍</Text>
+                <Heading
+                  fontSize={{ base: '2xl', md: '3xl' }}
+                  fontWeight={900}
+                  letterSpacing="-0.5px"
+                  bgGradient="linear(to-r, teal.600, teal.400)"
+                  bgClip="text"
+                >
+                  {t('recipeSearch.pageTitle')}
+                </Heading>
+              </HStack>
+              <Text color="gray.500" fontSize="sm" pl={9}>
+                {t('recipeSearch.pageSubtitle')}
+              </Text>
+            </VStack>
+
+            {/* Manual clear button — only shown when results are present */}
+            {recipes.length > 0 && !searchMutation.isPending && (
+              <Button
+                size="sm"
+                variant="ghost"
+                colorScheme="gray"
+                borderRadius="xl"
+                fontWeight={600}
+                leftIcon={<Text as="span" fontSize="xs">🗑️</Text>}
+                onClick={handleClearResults}
+                color="gray.400"
+                _hover={{ color: 'red.400', bg: 'red.50' }}
+                transition="all 0.2s"
               >
-                {t('recipeSearch.pageTitle')}
-              </Heading>
-            </HStack>
-            <Text color="gray.500" fontSize="sm" pl={9}>
-              {t('recipeSearch.pageSubtitle', 'Add ingredients and find the perfect recipe')}
-            </Text>
-          </VStack>
+                {t('recipeSearch.clearResults')}
+              </Button>
+            )}
+          </Flex>
         </MotionBox>
 
         {/* Ingredient manager */}

@@ -9,6 +9,7 @@ import {
   removeMealPlanEntry,
   updateMealStatus,
 } from '../../../api/mealPlanning';
+import { deleteSavedRecipe } from '../../../api/recipes';
 import type {
   AddMealPlanEntryRequest,
   AiMealPlanConfirmRequest,
@@ -54,6 +55,14 @@ export const useMealPlanning = (weekStart: Dayjs) => {
     onSuccess: invalidateMealPlan,
   });
 
+  const invalidateSavedRecipes = () =>
+    queryClient.invalidateQueries({ queryKey: [SAVED_RECIPES_QUERY_KEY, USER_ID] });
+
+  const deleteSavedRecipeMutation = useMutation({
+    mutationFn: (recipeId: number) => deleteSavedRecipe(USER_ID, recipeId),
+    onSuccess: invalidateSavedRecipes,
+  });
+
   const generateAiPlanMutation = useMutation({
     mutationFn: (payload: AiMealPlanRequest) => generateAiMealPlan(USER_ID, payload),
   });
@@ -75,6 +84,9 @@ export const useMealPlanning = (weekStart: Dayjs) => {
     addMealStatus: addMealMutation.status,
     removeMealStatus: removeMealMutation.status,
     updateMealStatusState: updateStatusMutation.status,
+    deleteSavedRecipe: deleteSavedRecipeMutation.mutateAsync,
+    isDeletingSavedRecipe: deleteSavedRecipeMutation.isPending,
+    deletingSavedRecipeId: deleteSavedRecipeMutation.variables ?? null,
     generateAiPlan: generateAiPlanMutation.mutateAsync,
     confirmAiPlan: confirmAiPlanMutation.mutateAsync,
     isGeneratingAiPlan: generateAiPlanMutation.isPending,
