@@ -18,5 +18,5 @@ recipewiz:
       app-id: ${RECIPE_APP_ID:888c0788}
       app-key: ${RECIPE_APP_KEY:8373e7fe4c37014bd8be829454ec0e82}
     nutrition-analysis:
-      app-id: ${NA_APP_ID:}
-      app-key: ${NA_APP_KEY:}
+      app-id: ${NA_APP_ID:57b74073}
+      app-key: ${NA_APP_KEY:89370c3925032d1dd958c3d1df8ac314}

@@ -87,24 +87,65 @@ public class NutritionAnalysisDataAccessObject implements NutritionAnalysisDataA
     }
 
     private List<Nutrient> parseNutrientsResponse(String jsonData) throws NutritionAnalysisException {
-        final List<Nutrient> nutrientsList = new ArrayList<>();
         try {
             final JSONObject jsonObject = new JSONObject(jsonData);
-            final JSONObject totalNutrients = jsonObject.getJSONObject("totalNutrients");
 
-            for (String key : totalNutrients.keySet()) {
-                final JSONObject nutrient = totalNutrients.getJSONObject(key);
-                final String aNutrient = nutrient.getString("label")
-                        + ": "
-                        + nutrient.getInt("quantity")
-                        + nutrient.getString("unit");
-
-                nutrientsList.add(new Nutrient(aNutrient));
+            // Prefer top-level totalNutrients when available (paid tier)
+            if (jsonObject.has("totalNutrients")) {
+                return parseFromTotalNutrients(jsonObject.getJSONObject("totalNutrients"));
             }
+
+            // Fallback: aggregate per-ingredient nutrients (free/developer tier)
+            return parseFromIngredients(jsonObject);
         }
         catch (JSONException exception) {
             throw new NutritionAnalysisException("Error processing nutrition analysis", exception);
         }
-        return nutrientsList;
+    }
+
+    private List<Nutrient> parseFromTotalNutrients(JSONObject totalNutrients) {
+        final List<Nutrient> result = new ArrayList<>();
+        for (String key : totalNutrients.keySet()) {
+            final JSONObject n = totalNutrients.getJSONObject(key);
+            result.add(new Nutrient(
+                    n.getString("label") + ": "
+                    + Math.round(n.getDouble("quantity"))
+                    + n.getString("unit")));
+        }
+        return result;
+    }
+
+    private List<Nutrient> parseFromIngredients(JSONObject jsonObject) {
+        // Aggregate nutrients across all ingredients
+        final java.util.Map<String, double[]> aggregated = new java.util.LinkedHashMap<>();
+        final java.util.Map<String, String[]> meta = new java.util.LinkedHashMap<>();
+
+        final org.json.JSONArray ingredients = jsonObject.optJSONArray("ingredients");
+        if (ingredients == null) {
+            return new ArrayList<>();
+        }
+
+        for (int i = 0; i < ingredients.length(); i++) {
+            final org.json.JSONArray parsed = ingredients.getJSONObject(i).optJSONArray("parsed");
+            if (parsed == null) continue;
+            for (int j = 0; j < parsed.length(); j++) {
+                final JSONObject nutrients = parsed.getJSONObject(j).optJSONObject("nutrients");
+                if (nutrients == null) continue;
+                for (String key : nutrients.keySet()) {
+                    final JSONObject n = nutrients.getJSONObject(key);
+                    final double qty = n.optDouble("quantity", 0);
+                    aggregated.merge(key, new double[]{qty}, (a, b) -> new double[]{a[0] + b[0]});
+                    meta.putIfAbsent(key, new String[]{n.optString("label", key), n.optString("unit", "")});
+                }
+            }
+        }
+
+        final List<Nutrient> result = new ArrayList<>();
+        for (String key : aggregated.keySet()) {
+            final String[] labelUnit = meta.get(key);
+            final long qty = Math.round(aggregated.get(key)[0]);
+            result.add(new Nutrient(labelUnit[0] + ": " + qty + labelUnit[1]));
+        }
+        return result;
     }
 }

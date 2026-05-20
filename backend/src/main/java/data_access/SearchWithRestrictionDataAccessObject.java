@@ -89,12 +89,13 @@ public class SearchWithRestrictionDataAccessObject implements SearchWithRestrict
                     String instructions = recipeJson.optString("url", "Instructions not available");
                     List<Ingredient> ingredients = extractIngredients(recipeJson.getJSONArray("ingredients"));
 
-                    // Provide default nutrition if not available
-                    Nutrition nutrition = new Nutrition(0, 0, 0, 0, 0, 0);
+                    // Extract nutrition from API response
+                    JSONObject totalNutrients = recipeJson.optJSONObject("totalNutrients");
+                    Nutrition nutrition = extractNutrition(totalNutrients);
 
                     // Add a default food list and servings
                     List<Food> food = new ArrayList<>();
-                    int servings = 1;
+                    int servings = (int) Math.max(1, recipeJson.optDouble("yield", 1));
 
                     // Create Recipe
                     Recipe recipe = new Recipe(
@@ -116,6 +117,25 @@ public class SearchWithRestrictionDataAccessObject implements SearchWithRestrict
             throw new RuntimeException();
         }
         return recipes;
+    }
+
+    private Nutrition extractNutrition(JSONObject totalNutrients) {
+        if (totalNutrients == null) {
+            return new Nutrition(0, 0, 0, 0, 0, 0);
+        }
+        return new Nutrition(
+                optQty(totalNutrients, "ENERC_KCAL"),
+                optQty(totalNutrients, "PROCNT"),
+                optQty(totalNutrients, "FAT"),
+                optQty(totalNutrients, "CHOCDF"),
+                optQty(totalNutrients, "FIBTG"),
+                optQty(totalNutrients, "SUGAR")
+        );
+    }
+
+    private double optQty(JSONObject nutrients, String key) {
+        JSONObject entry = nutrients.optJSONObject(key);
+        return entry != null ? entry.optDouble("quantity", 0) : 0;
     }
 
     /**
