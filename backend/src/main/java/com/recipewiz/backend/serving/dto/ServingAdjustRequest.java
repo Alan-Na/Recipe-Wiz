@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 public record ServingAdjustRequest(
+        @Min(1) int userId,
         @Min(1) int newServings,
         @NotEmpty List<@Valid RecipeDto> recipes
 ) {

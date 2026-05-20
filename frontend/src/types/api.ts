@@ -52,6 +52,7 @@ export interface UpdateMealStatusRequest {
 }
 
 export interface ServingAdjustRequest {
+  userId: number;
   newServings: number;
   recipes: RecipeDto[];
 }

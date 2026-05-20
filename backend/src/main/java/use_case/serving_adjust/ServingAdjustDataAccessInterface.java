@@ -9,10 +9,12 @@ import entity.Recipe;
  */
 public interface ServingAdjustDataAccessInterface {
     /**
-     * Saves the updated recipes after serving adjustment.
+     * Persists serving-adjusted recipes for the given user, updating both
+     * saved_recipes and meal_plan_entries where the recipe_id matches.
      *
+     * @param userId  The user whose recipe data should be updated.
      * @param recipes The list of updated recipes.
      * @throws ServingAdjustException if an error occurs during saving.
      */
-    void saveUpdatedRecipes(List<Recipe> recipes) throws ServingAdjustException;
+    void saveUpdatedRecipes(int userId, List<Recipe> recipes) throws ServingAdjustException;
 }

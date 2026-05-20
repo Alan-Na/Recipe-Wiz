@@ -32,6 +32,7 @@ public class ServingAdjustInteractor implements ServingAdjustInputBoundary {
      */
     @Override
     public void adjustServings(ServingAdjustInputData inputData) throws ServingAdjustException {
+        final int userId = inputData.getUserId();
         final int newServings = inputData.getNewServings();
         final List<Recipe> recipes = inputData.getRecipes();
 
@@ -40,7 +41,7 @@ public class ServingAdjustInteractor implements ServingAdjustInputBoundary {
         }
 
         try {
-            dataAccess.saveUpdatedRecipes(recipes);
+            dataAccess.saveUpdatedRecipes(userId, recipes);
         }
         catch (Exception exc) {
             throw new ServingAdjustException("Failed to save updated recipes.", exc);

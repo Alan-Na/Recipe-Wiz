@@ -118,7 +118,7 @@ export const RecipeSearchPage = () => {
 
   const adjustMutation = useMutation({
     mutationFn: async ({ recipe, servings }: { recipe: RecipeDto; servings: number }) => {
-      const updated = await adjustServings({ newServings: servings, recipes: [recipe] });
+      const updated = await adjustServings({ userId: USER_ID, newServings: servings, recipes: [recipe] });
       return updated[0];
     },
     onSuccess: (updatedRecipe) => {

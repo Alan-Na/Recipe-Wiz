@@ -13,6 +13,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import use_case.ai_meal_plan.AiGenerationGateway;
@@ -54,6 +55,15 @@ public class DeepSeekAiGateway implements AiGenerationGateway {
             @Value("${recipewiz.deepseek.api-key}") String apiKey) {
         this.httpClient = httpClient;
         this.apiKey = apiKey;
+    }
+
+    @PostConstruct
+    public void validateApiKey() {
+        if (apiKey == null || apiKey.isBlank()) {
+            throw new IllegalStateException(
+                "DeepSeek API key is not configured. " +
+                "Set the DEEPSEEK_API_KEY environment variable before starting the application.");
+        }
     }
 
     @Override

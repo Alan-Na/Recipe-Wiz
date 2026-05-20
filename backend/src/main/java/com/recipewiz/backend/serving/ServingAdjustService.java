@@ -35,7 +35,7 @@ public class ServingAdjustService {
             recipes.add(recipeMapper.toEntity(recipeDto));
         }
 
-        final ServingAdjustInputData inputData = new ServingAdjustInputData(request.newServings(), recipes);
+        final ServingAdjustInputData inputData = new ServingAdjustInputData(request.userId(), request.newServings(), recipes);
         try {
             interactor.adjustServings(inputData);
         }
