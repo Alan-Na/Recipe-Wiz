@@ -1,13 +1,10 @@
 import { useState, useMemo } from 'react';
 import {
-  Flex,
-  Heading,
-  Stack,
-  Text,
-  useToast,
+  Box, Flex, HStack, Stack, Text, useToast, VStack,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
 import type { RecipeDto } from '../types/api';
 import { useMealPlanning } from '../features/meal-planning/hooks/useMealPlanning';
 import { getWeekStart, getWeekDays } from '../features/meal-planning/utils';
@@ -15,6 +12,8 @@ import { WeekNavigator } from '../features/meal-planning/components/WeekNavigato
 import { MealPlanCalendar } from '../features/meal-planning/components/MealPlanCalendar';
 import { SavedRecipesPanel } from '../features/meal-planning/components/SavedRecipesPanel';
 import { AddMealModal } from '../features/meal-planning/components/AddMealModal';
+
+const MotionBox = motion(Box);
 
 export const MealPlannerPage = () => {
   const [weekStart, setWeekStart] = useState(() => getWeekStart(dayjs()));
@@ -27,47 +26,21 @@ export const MealPlannerPage = () => {
 
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
 
-  const {
-    mealPlan,
-    isMealPlanLoading,
-    savedRecipes,
-    isSavedRecipesLoading,
-    addMeal,
-    removeMeal,
-    updateMealStatus,
-  } = useMealPlanning(weekStart);
+  const { mealPlan, isMealPlanLoading, savedRecipes, isSavedRecipesLoading, addMeal, removeMeal, updateMealStatus } =
+    useMealPlanning(weekStart);
 
   const handlePreviousWeek = () => setWeekStart((prev) => getWeekStart(prev.subtract(7, 'day')));
-  const handleNextWeek = () => setWeekStart((prev) => getWeekStart(prev.add(7, 'day')));
-  const handleResetWeek = () => setWeekStart(getWeekStart(dayjs()));
+  const handleNextWeek    = () => setWeekStart((prev) => getWeekStart(prev.add(7, 'day')));
+  const handleResetWeek   = () => setWeekStart(getWeekStart(dayjs()));
 
-  const handleAddMeal = async ({
-    recipeId,
-    mealDate,
-    mealType,
-  }: {
-    recipeId: number;
-    mealDate: string;
-    mealType: string;
-  }) => {
+  const handleAddMeal = async ({ recipeId, mealDate, mealType }: { recipeId: number; mealDate: string; mealType: string }) => {
     setIsAddingMeal(true);
     try {
       await addMeal({ recipeId, mealDate, mealType });
-      toast({
-        title: t('mealPlanner.toast.mealAdded'),
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.mealAdded'), status: 'success', duration: 3000, isClosable: true });
       setSelectedRecipe(null);
     } catch (error) {
-      toast({
-        title: t('mealPlanner.toast.mealAddFailed'),
-        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.mealAddFailed'), description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'), status: 'error', duration: 4000, isClosable: true });
     } finally {
       setIsAddingMeal(false);
     }
@@ -77,20 +50,9 @@ export const MealPlannerPage = () => {
     setProcessingEntryId(entryId);
     try {
       await updateMealStatus({ entryId, status });
-      toast({
-        title: t('mealPlanner.toast.statusUpdated'),
-        status: 'success',
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.statusUpdated'), status: 'success', duration: 2500, isClosable: true });
     } catch (error) {
-      toast({
-        title: t('mealPlanner.toast.statusFailed'),
-        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.statusFailed'), description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'), status: 'error', duration: 4000, isClosable: true });
     } finally {
       setProcessingEntryId(null);
     }
@@ -100,20 +62,9 @@ export const MealPlannerPage = () => {
     setRemovingEntryId(entryId);
     try {
       await removeMeal(entryId);
-      toast({
-        title: t('mealPlanner.toast.mealRemoved'),
-        status: 'success',
-        duration: 2500,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.mealRemoved'), status: 'success', duration: 2500, isClosable: true });
     } catch (error) {
-      toast({
-        title: t('mealPlanner.toast.mealRemoveFailed'),
-        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
-        status: 'error',
-        duration: 4000,
-        isClosable: true,
-      });
+      toast({ title: t('mealPlanner.toast.mealRemoveFailed'), description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'), status: 'error', duration: 4000, isClosable: true });
     } finally {
       setRemovingEntryId(null);
     }
@@ -122,26 +73,84 @@ export const MealPlannerPage = () => {
   return (
     <>
       <Stack spacing={6} w="full">
-        <Heading color="teal.700">{t('mealPlanner.pageTitle')}</Heading>
-        <Text color="gray.600">{t('mealPlanner.pageDescription')}</Text>
 
-        <WeekNavigator
-          weekStart={weekStart}
-          onPreviousWeek={handlePreviousWeek}
-          onNextWeek={handleNextWeek}
-          onResetWeek={handleResetWeek}
-        />
+        {/* Page header */}
+        <MotionBox initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+          <HStack spacing={3} align="flex-end">
+            <VStack align="flex-start" spacing={0.5}>
+              <HStack spacing={2}>
+                <Text fontSize="2xl">📅</Text>
+                <Box
+                  fontSize={{ base: '2xl', md: '3xl' }}
+                  fontWeight={900}
+                  letterSpacing="-0.5px"
+                  bgGradient="linear(to-r, orange.500, orange.400)"
+                  bgClip="text"
+                  as="h1"
+                >
+                  {t('mealPlanner.pageTitle')}
+                </Box>
+              </HStack>
+              <Text color="gray.500" fontSize="sm" pl={9}>
+                {t('mealPlanner.pageDescription')}
+              </Text>
+            </VStack>
+          </HStack>
+        </MotionBox>
 
-        <Flex gap={6} direction={{ base: 'column', lg: 'row' }} align="stretch">
-          <MealPlanCalendar
-            weekDays={weekDays}
-            entries={mealPlan}
-            isLoading={isMealPlanLoading}
-            processingEntryId={processingEntryId}
-            removingEntryId={removingEntryId}
-            onUpdateStatus={handleUpdateStatus}
-            onRemove={handleRemoveEntry}
+        {/* Quick stats strip */}
+        <MotionBox initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.08 }}>
+          <Flex gap={3} flexWrap="wrap">
+            {[
+              { emoji: '🍽️', label: t('mealPlanner.mealsThisWeek', 'Meals this week'), value: mealPlan.length },
+              { emoji: '💾', label: t('mealPlanner.savedRecipes', 'Saved recipes'), value: savedRecipes.length },
+            ].map((stat) => (
+              <Box
+                key={stat.label}
+                bg="white"
+                borderRadius="xl"
+                px={5}
+                py={3}
+                shadow="sm"
+                border="1px solid"
+                borderColor="orange.100"
+                display="flex"
+                alignItems="center"
+                gap={3}
+              >
+                <Text fontSize="lg">{stat.emoji}</Text>
+                <Box>
+                  <Text fontSize="xl" fontWeight={800} color="gray.800" lineHeight={1}>{stat.value}</Text>
+                  <Text fontSize="xs" color="gray.500" fontWeight={500}>{stat.label}</Text>
+                </Box>
+              </Box>
+            ))}
+          </Flex>
+        </MotionBox>
+
+        {/* Week navigator */}
+        <MotionBox initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.12 }}>
+          <WeekNavigator
+            weekStart={weekStart}
+            onPreviousWeek={handlePreviousWeek}
+            onNextWeek={handleNextWeek}
+            onResetWeek={handleResetWeek}
           />
+        </MotionBox>
+
+        {/* Calendar + panel */}
+        <Flex gap={5} direction={{ base: 'column', lg: 'row' }} align="flex-start">
+          <Box flex={1} minW={0}>
+            <MealPlanCalendar
+              weekDays={weekDays}
+              entries={mealPlan}
+              isLoading={isMealPlanLoading}
+              processingEntryId={processingEntryId}
+              removingEntryId={removingEntryId}
+              onUpdateStatus={handleUpdateStatus}
+              onRemove={handleRemoveEntry}
+            />
+          </Box>
           <SavedRecipesPanel
             recipes={savedRecipes}
             isLoading={isSavedRecipesLoading}

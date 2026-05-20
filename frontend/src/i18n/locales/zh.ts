@@ -35,6 +35,7 @@ const zh = {
   },
   recipeSearch: {
     pageTitle: '食谱搜索',
+    pageSubtitle: '添加食材，发现完美食谱',
     noRestrictions: '未应用任何限制',
     filtersButton: '筛选',
     searchButton: '搜索食谱',
@@ -92,6 +93,8 @@ const zh = {
   },
   mealPlanner: {
     pageTitle: '膳食计划',
+    mealsThisWeek: '本周餐食',
+    savedRecipes: '已保存食谱',
     pageDescription:
       '将已保存的食谱分配到每天的具体餐次，烹饪时随时更新状态，跨设备实时同步。',
     toast: {

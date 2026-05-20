@@ -1,6 +1,4 @@
-html,
-body,
-#root {
+html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -9,3 +7,35 @@ body,
 * {
   box-sizing: border-box;
 }
+
+/* Floating animation for hero decorations */
+@keyframes floatA {
+  0%, 100% { transform: translateY(0px) rotate(-4deg); }
+  50%       { transform: translateY(-18px) rotate(4deg); }
+}
+@keyframes floatB {
+  0%, 100% { transform: translateY(0px) rotate(3deg); }
+  50%       { transform: translateY(-12px) rotate(-5deg); }
+}
+@keyframes floatC {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-22px) rotate(6deg); }
+}
+
+.float-a { animation: floatA 5s ease-in-out infinite; }
+.float-b { animation: floatB 6.5s ease-in-out infinite; }
+.float-c { animation: floatC 4.2s ease-in-out infinite; }
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #2C7A7B, #F6AD55);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A0AEC0; }

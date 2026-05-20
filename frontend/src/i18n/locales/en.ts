@@ -37,6 +37,7 @@ const en = {
   },
   recipeSearch: {
     pageTitle: 'Recipe Search',
+    pageSubtitle: 'Add ingredients and find the perfect recipe',
     noRestrictions: 'No restrictions applied',
     filtersButton: 'Filters',
     searchButton: 'Search Recipes',
@@ -95,6 +96,8 @@ const en = {
   },
   mealPlanner: {
     pageTitle: 'Meal Planner',
+    mealsThisWeek: 'Meals this week',
+    savedRecipes: 'Saved recipes',
     pageDescription:
       'Plan your week by assigning saved recipes to specific days and meal types. Update meal status as you cook and stay in sync across all your devices.',
     toast: {
