@@ -4,195 +4,190 @@
 
 ## Project Overview
 
-Recipe Wiz is an innovative meal planning and recipe management application designed to simplify your cooking experience. It empowers users to discover recipes based on available ingredients, dietary preferences, or specific meal types. With features like nutritional analysis, a customizable meal planner, shopping list automation, and adjustable serving sizes, Recipe Wiz aims to make meal preparation both efficient and health-conscious.
+Recipe Wiz is a full-stack meal planning and recipe management web application. It helps users discover recipes by ingredient, analyze nutrition, plan a weekly menu, and now generate AI-powered meal plans — all from a modern, bilingual (English / Chinese) interface.
 
 ## Contents
 
-1. [Author](#Author)
-2. [Key Features](#Key-Features)
-2. [Installation Instructions](#Installation-Instructions)
-3. [Usage Guide](#usage-guide)
-4. [License](#License)
-5. [Support and Feedback](#support-and-feedback)
-6. [How to Contribute](#how-to-contribute)
-7. [API USAGE](#API-USAGE)
+1. [Author](#author)
+2. [Key Features](#key-features)
+3. [Tech Stack](#tech-stack)
+4. [Getting Started](#getting-started)
+5. [Usage Guide](#usage-guide)
+6. [License](#license)
+7. [Support and Feedback](#support-and-feedback)
+8. [How to Contribute](#how-to-contribute)
+9. [API Usage](#api-usage)
 
 ## Author
-- Xineng Na 
-  - (@Alan-Na)
+
+- Xineng Na (@Alan-Na)
 
 ## Key Features
 
 - **Smart Recipe Search**
-    - Find recipes using ingredients you have on hand.
-    - Filter results by meal types and dietary restrictions.
-    - Leverage the Edamam Recipe API for a vast selection.
+  - Find recipes using ingredients you have on hand.
+  - Filter by diet labels, health labels, and cuisine types.
+  - Results persist across page navigation — no accidental refresh.
 
-- **Detailed Nutritional Information**
-    - Access comprehensive nutritional data for each recipe.
-    - Includes calories, macronutrients, and other essential nutrients.
+- **Nutrition Analysis**
+  - Per-recipe detailed nutrient breakdown (calories, protein, fat, carbs, vitamins, minerals).
+  - Color-coded nutrient cards for quick scanning.
 
 - **Personalized Meal Planner**
-    - Schedule meals in a weekly calendar format.
-    - Add, modify, or remove recipes from your plan easily.
-    - Save your meal plans for future reference.
+  - Weekly calendar with day-by-day meal slots (Breakfast / Lunch / Dinner / Snack).
+  - Daily calorie total shown for each day that has meals planned.
+  - Update meal status (Planned → In Progress → Completed).
+  - Add, remove, and re-schedule meals freely.
+
+- **Saved Recipes Library**
+  - Save any searched recipe with one click.
+  - Delete saved recipes directly from the Meal Planner panel.
+  - Saved recipes feed directly into the weekly calendar.
+
+- **AI Meal Planner** *(powered by DeepSeek)*
+  - Enter your gender, age, height, weight, and health goal.
+  - AI generates a complete week-to-Sunday meal plan using only your saved recipes.
+  - Preview the plan before committing — regenerate if needed, then confirm to save all entries at once.
+  - Requires at least 3 saved recipes to activate.
 
 - **Adjustable Serving Sizes**
-    - Modify recipes to fit the number of servings you need.
-    - Automatic recalculation of ingredient amounts.
+  - Scale any recipe up or down; ingredient quantities recalculate automatically.
 
-- **Dietary Preferences and Restrictions**
-    - Apply filters for gluten-free, vegetarian, vegan, low-carb, and more.
-    - Ensures all recipes meet your dietary needs.
+- **Bilingual UI**
+  - Full English / Chinese support with instant runtime toggle (persists across sessions).
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript, Vite, Chakra UI v2, TanStack Query v5, framer-motion, react-i18next |
+| Backend | Spring Boot 3.2, Java 17, Maven, Clean Architecture |
+| Database | SQLite (via JDBC) |
+| External APIs | Edamam Recipe Search API, Edamam Nutrition Analysis API, DeepSeek Chat API |
+
+## Getting Started
+
+### Prerequisites
+
+- Java 17+
+- Node.js 18+
+- Maven 3.8+
+
+### 1 — Clone
+
+```bash
+git clone https://github.com/Alan-Na/Recipe-Wiz.git
+cd Recipe-Wiz
+```
+
+### 2 — Backend
+
+```bash
+cd backend
+mvn package -DskipTests
+java -jar target/recipewiz-backend-0.1.0-SNAPSHOT.jar --server.port=9271
+```
+
+> The server starts on port **9271** by default. Override with `--server.port=<port>`.
+
+### 3 — Frontend
+
+```bash
+cd frontend
+cp .env.example .env.local          # or create manually (see below)
+npm install
+npm run dev -- --port 9272
+```
+
+`.env.local` should contain:
+
+```
+VITE_API_BASE_URL=http://localhost:9271
+```
+
+The app will be available at **http://localhost:9272**.
+
+### Environment Variables (optional overrides)
+
+| Variable | Default | Description |
+|---|---|---|
+| `RECIPE_APP_ID` | bundled | Edamam Recipe Search app ID |
+| `RECIPE_APP_KEY` | bundled | Edamam Recipe Search app key |
+| `NA_APP_ID` | bundled | Edamam Nutrition Analysis app ID |
+| `NA_APP_KEY` | bundled | Edamam Nutrition Analysis app key |
+| `DEEPSEEK_API_KEY` | bundled | DeepSeek API key for AI Meal Planner |
 
 ## Usage Guide
 
-The moment you run the program, you should see the front page view. If you click “Recipe Search” in that window, you'll be taken to a recipe search window, and if you click Meal planner, you'll see a meal planning calendar.
+### Recipe Search
 
-![frontview.png](resources/frontview.png)
+1. **Add ingredients** — type an ingredient name in the input field and press **Add** or hit Enter.
+2. **Apply filters** — click **Filters** to open the restriction drawer and select diet / health / cuisine labels. Active filters appear as removable tags.
+3. **Search** — click **Search Recipes**. Results stay on screen if you navigate away and come back.
+4. **Analyze nutrition** — click **Analyze Nutrition** on any recipe card to view the full nutrient breakdown.
+5. **Save a recipe** — click **Save Recipe** to add it to your library (used by the Meal Planner).
+6. **Adjust servings** — enter a number and click **Update Servings** to rescale ingredient quantities.
+7. **Clear results** — use the **Clear Results** button (top-right of the page header) to reset everything manually.
 
-### How to use Recipe Search
+### Meal Planner
 
-1. You can add an ingredient to the ingredients panel by writing it in the ingredient field and hitting the add ingredient button. Conversely, you can remove an ingredient from the ingredients pane by selecting it in the ingredients panel and pressing the remove ingredient button.
+1. **Navigate weeks** — use the `←` / `→` arrows or click **Today** to jump to the current week.
+2. **Add a meal** — click **Add to Calendar** on any saved recipe, then choose the day and meal type.
+3. **Daily calorie total** — each day column shows a 🔥 calorie badge (sum of all meals that day) whenever at least one meal is planned.
+4. **Update status** — use the dropdown on each meal entry to mark it as Planned / In Progress / Completed.
+5. **Remove a meal** — click the trash icon on any meal entry.
+6. **Delete a saved recipe** — click the 🗑️ icon on a recipe card in the Saved Recipes panel.
 
-![readme1.png](resources/add.png)
+### AI Meal Planner
 
-2. You can filter your recipe search by pressing the add restriction button. This button will open a filter frame window where you can select Diet Label, Health Label, Cuisine Type, etc. in the pop-up window. You can remove a restriction from the restrictions panel by selecting it in the same way as remove ingredient and clicking the remove restriction button.
+1. On the Meal Planner page, expand the **🤖 AI Meal Planner** panel.
+2. Select your **gender**, **age**, **height**, and **weight** from the dropdowns.
+3. Describe your **health goal** (e.g. "lose weight", "high protein", "low carb").
+4. Click **Generate Meal Plan** — the AI builds a plan from today through Sunday using your saved recipes.
+5. Review the preview. Click **Regenerate** for a different plan or **Confirm & Save to Calendar** to write all entries at once.
 
-![readme2.png](resources/filter.png)
-
-3. The Search button allows you to search for recipes based on the given ingredients and restrictions.
-
-![readme3.png](resources/search.png)
-
-4. If you enter a number in the servings field and then update, the recipe results in the results panel will change to match the given servings value.
-
-![readme4.png](resources/servings.png)
-
-5. If the analyze nutrition button is pressed after selecting a specific recipe, the user can view the nutritional information for that specific recipe.
-
-6. When you press the Save Recipe button, a specific recipe is saved to your meal planning calendar.
-
-
-
-### How to use Meal Planner
-
-1. Recipes saved from the recipe search bar will be available in the meal planning calendar, allowing users to customize their meal planning calendar.
-
-2. Users can select different meal types and add recipes to the meal planning calendar to be eaten on the desired date.
-
-3. Recipes saved in the meal planning calendar will remain as separate json files even after the program is terminated, and when the user runs the program again, the previously saved meal planning calendar will be loaded.
-
-![readme6.png](resources/readme6.png)
+> ⚠️ At least **3 saved recipes** are required before the AI planner can be activated.
 
 ## License
-- This project is licensed under the **MIT License**, which means you are free to:
-  - Use the code for personal or commercial purposes.
-  - Modify and distribute the code.
-  - Include the code in proprietary software.
 
+This project is licensed under the **MIT License** — you are free to use, modify, and distribute the code for personal or commercial purposes, provided the original copyright notice is retained.
 
-- However, you **must**:
-  - Include the original copyright notice and this permission notice in any copies of the software.
-  - Not hold the original authors liable for any damages arising from the use of the software.
+See the [LICENSE](./LICENSE) file for the full text.
 
-
-- You can view the full text of the MIT License in the [LICENSE](./LICENSE) file included in this repository.
 ## Support and Feedback
 
-We value your input and encourage you to provide feedback to help us improve Recipe Wiz. Here’s how you can share your thoughts and suggestions:
+1. **GitHub Issues** — report bugs or request features at [Issues](https://github.com/Alan-Na/Recipe-Wiz/issues).
+2. **Discussions** — join community conversations at [Discussions](https://github.com/Alan-Na/Recipe-Wiz/discussions).
 
-1. **GitHub Issues** 
-
-    - Submit feedback, report bugs, or suggest new features by creating an issue in the GitHub [Issues](https://github.com/Alan-Na/Recipe-Wiz/issues) section.
-
-
-2. **Discussion Board**
-
-   - Join discussions with the community and developers in our GitHub [Discussions](https://github.com/Alan-Na/Recipe-Wiz/discussions)
-
-### Feedback Guidelines
-
-**Valid Feedback Includes**:
-
-1. Clear descriptions of issues or suggestions.
-2. Steps to reproduce bugs, if applicable.
-3. Relevant screenshots, logs, or examples to support your points.
-
-**What to Expect**
-
-1. We aim to review and respond to feedback within 1 week.
-2. Once verified, we will prioritize fixes based on severity.
-3. Contributors who provide actionable feedback that results in improvements may receive acknowledgment in project updates.
-
+**When reporting a bug, please include:**
+- Clear description of the problem.
+- Steps to reproduce.
+- Relevant screenshots or logs.
 
 ## How to Contribute
 
-We welcome contributions from the community to improve Recipe Wiz!
-
-### Contribution Steps
-
-1. **Fork the Repository**
-    
-    - Click the Fork button on the top-right corner of the repository page.
-
-2. **Clone Your Fork**
-
-    ```bash
-   git clone https://github.com/Alan-Na/Recipe-Wiz.git
-3. **Create a New Branch**
-
-    - Create a branch where you make fixes.
-
-4. **Implement your changes**
-
-    - Fix bugs, create new features, or contribute code in your created branch from the previous step.
-
-5. **Commit Your Changes**
-
-    - After any changes, commit your changes with meaningful commit message.
-
-6. **Push Your Changes**
-
-7. **Submit a Pull Request**
-
-   - Go to the original repository and click on New Pull Request. 
-   - Provide a clear and detailed description of your changes.
+1. Fork the repository.
+2. Clone your fork: `git clone https://github.com/Alan-Na/Recipe-Wiz.git`
+3. Create a feature branch.
+4. Implement your changes with meaningful commits.
+5. Push and open a Pull Request with a clear description.
 
 ## API Usage
 
-In Recipe Wiz, we leverage the powerful **Edamam API** to enhance the user experience by providing comprehensive recipe search and nutritional analysis capabilities. Below is an overview of the APIs used and their functionality:
+### Edamam Recipe Search API
 
-### 1. Recipe Search API
+Used to search recipes by ingredient, diet label, health label, and cuisine type. Returns recipe titles, ingredient lists, preparation instructions, serving size, and per-serving nutrition data.
 
-The **Recipe Search API** from Edamam is utilized to enable users to:
+→ [Documentation](https://developer.edamam.com/edamam-recipe-api)
 
-- Search for recipes based on ingredients, dietary restrictions, and meal types.
-- Retrieve a rich dataset for each recipe, including:
-    - Recipe title, image, and preparation steps.
-    - Ingredients list with quantities.
-    - Dietary labels (e.g., gluten-free, vegetarian).
-    - Health labels (e.g., low-carb, keto-friendly).
+### Edamam Nutrition Analysis API
 
-This API ensures that Recipe Wiz provides tailored and diverse recipe suggestions for users with varying preferences and dietary needs.
+Used to calculate detailed per-nutrient breakdowns (calories, macros, vitamins, minerals) for any recipe, displayed in the Nutrition Analysis modal.
 
-### 2. Nutritional Analysis API
+→ [Documentation](https://developer.edamam.com/edamam-nutrition-api)
 
-The **Nutritional Analysis API** from Edamam powers the nutritional information feature in Recipe Wiz. This API is used to:
+### DeepSeek Chat API
 
-- Analyze recipes to calculate detailed nutritional data, including:
-    - Calories.
-    - Macronutrients (protein, fat, carbohydrates).
-    - Micronutrients (fiber, sugar, vitamins).
-- Display easy-to-understand nutritional breakdowns for each recipe, helping users make informed dietary choices.
+Used by the AI Meal Planner feature. Receives the user's physical profile, health goal, and list of saved recipes, then returns a structured JSON meal plan covering the remaining days of the current week.
 
-### API Documentation
-
-For more details about the APIs used, refer to the official Edamam API documentation:
-
-- [Recipe Search API Documentation](https://developer.edamam.com/edamam-recipe-api)
-- [Nutritional Analysis API Documentation](https://developer.edamam.com/edamam-nutrition-api)
-
-   
-
-
+→ [Documentation](https://platform.deepseek.com/api-docs)
