@@ -14,6 +14,7 @@ import {
   Stack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { CUISINE_OPTIONS, DIET_OPTIONS, HEALTH_OPTIONS } from '../constants';
 import type { SearchRestrictions } from '../types';
 
@@ -31,6 +32,7 @@ export const RestrictionDrawer = ({
   onApply,
 }: RestrictionDrawerProps) => {
   const [localRestrictions, setLocalRestrictions] = useState<SearchRestrictions>(restrictions);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (isOpen) {
@@ -70,20 +72,20 @@ export const RestrictionDrawer = ({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px">Apply Restrictions</DrawerHeader>
+        <DrawerHeader borderBottomWidth="1px">{t('restrictionDrawer.title')}</DrawerHeader>
         <DrawerBody>
           <Stack spacing={6}>
-            {renderGroup('Diet Labels', DIET_OPTIONS, 'diet')}
-            {renderGroup('Health Labels', HEALTH_OPTIONS, 'health')}
-            {renderGroup('Cuisine Types', CUISINE_OPTIONS, 'cuisine')}
+            {renderGroup(t('restrictionDrawer.dietLabels'), DIET_OPTIONS, 'diet')}
+            {renderGroup(t('restrictionDrawer.healthLabels'), HEALTH_OPTIONS, 'health')}
+            {renderGroup(t('restrictionDrawer.cuisineTypes'), CUISINE_OPTIONS, 'cuisine')}
           </Stack>
         </DrawerBody>
         <DrawerFooter borderTopWidth="1px">
           <Button variant="outline" mr={3} onClick={onClose}>
-            Cancel
+            {t('restrictionDrawer.cancel')}
           </Button>
           <Button colorScheme="teal" onClick={handleApply}>
-            Apply
+            {t('restrictionDrawer.apply')}
           </Button>
         </DrawerFooter>
       </DrawerContent>

@@ -15,6 +15,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import type { Dayjs } from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import { MEAL_TYPES } from '../utils';
 import type { RecipeDto } from '../../../types/api';
 
@@ -35,8 +36,12 @@ export const AddMealModal = ({
   onSubmit,
   isSubmitting,
 }: AddMealModalProps) => {
-  const [selectedDate, setSelectedDate] = useState<string>(() => weekDays[0]?.format('YYYY-MM-DD') ?? '');
+  const [selectedDate, setSelectedDate] = useState<string>(
+    () => weekDays[0]?.format('YYYY-MM-DD') ?? '',
+  );
   const [mealType, setMealType] = useState<string>(MEAL_TYPES[0]);
+  const { t, i18n } = useTranslation();
+  const isZh = i18n.language === 'zh';
 
   useEffect(() => {
     if (isOpen && weekDays.length > 0) {
@@ -45,46 +50,45 @@ export const AddMealModal = ({
     }
   }, [isOpen, weekDays]);
 
-  if (!recipe) {
-    return null;
-  }
+  if (!recipe) return null;
 
   const handleSubmit = async () => {
-    if (!selectedDate) {
-      return;
-    }
-    await onSubmit({
-      recipeId: recipe.recipeId,
-      mealDate: selectedDate,
-      mealType,
-    });
+    if (!selectedDate) return;
+    await onSubmit({ recipeId: recipe.recipeId, mealDate: selectedDate, mealType });
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add to Meal Plan</ModalHeader>
+        <ModalHeader>{t('addMealModal.title')}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Stack spacing={4}>
-            <Text color="gray.600">Add <strong>{recipe.title}</strong> to your calendar.</Text>
+            <Text color="gray.600">
+              {isZh
+                ? <>将 <strong>{recipe.title}</strong> 添加到您的日历。</>
+                : <>Add <strong>{recipe.title}</strong> to your calendar.</>}
+            </Text>
             <FormControl>
-              <FormLabel>Meal Date</FormLabel>
-              <Select value={selectedDate} onChange={(event) => setSelectedDate(event.target.value)}>
+              <FormLabel>{t('addMealModal.mealDate')}</FormLabel>
+              <Select
+                value={selectedDate}
+                onChange={(event) => setSelectedDate(event.target.value)}
+              >
                 {weekDays.map((day) => (
                   <option key={day.format('YYYY-MM-DD')} value={day.format('YYYY-MM-DD')}>
-                    {day.format('dddd, MMM D')}
+                    {isZh ? day.format('M月D日 dddd') : day.format('dddd, MMM D')}
                   </option>
                 ))}
               </Select>
             </FormControl>
             <FormControl>
-              <FormLabel>Meal Type</FormLabel>
+              <FormLabel>{t('addMealModal.mealType')}</FormLabel>
               <Select value={mealType} onChange={(event) => setMealType(event.target.value)}>
                 {MEAL_TYPES.map((type) => (
                   <option key={type} value={type}>
-                    {type}
+                    {t(`mealTypes.${type}`, type)}
                   </option>
                 ))}
               </Select>
@@ -93,10 +97,10 @@ export const AddMealModal = ({
         </ModalBody>
         <ModalFooter>
           <Button variant="ghost" mr={3} onClick={onClose}>
-            Cancel
+            {t('addMealModal.cancel')}
           </Button>
           <Button colorScheme="teal" onClick={handleSubmit} isLoading={isSubmitting}>
-            Add Meal
+            {t('addMealModal.addMeal')}
           </Button>
         </ModalFooter>
       </ModalContent>

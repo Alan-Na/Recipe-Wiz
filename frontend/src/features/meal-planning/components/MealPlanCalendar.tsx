@@ -14,6 +14,7 @@ import {
 import { DeleteIcon } from '@chakra-ui/icons';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import type { MealPlanEntryDto } from '../../../types/api';
 import { MEAL_STATUSES } from '../utils';
 
@@ -39,6 +40,9 @@ export const MealPlanCalendar = ({
   onUpdateStatus,
   onRemove,
 }: MealPlanCalendarProps) => {
+  const { t, i18n } = useTranslation();
+  const isZh = i18n.language === 'zh';
+
   if (isLoading) {
     return (
       <Flex justify="center" align="center" bg="white" borderRadius="xl" p={10} shadow="sm" flex="1">
@@ -52,6 +56,10 @@ export const MealPlanCalendar = ({
       {weekDays.map((day) => {
         const dayEntries = getEntriesForDate(entries, day);
         const isToday = day.isSame(dayjs(), 'day');
+        // Format date header based on language
+        const dateLabel = isZh
+          ? day.format('M月D日 ddd')
+          : day.format('ddd, MMM D');
 
         return (
           <Box
@@ -65,17 +73,17 @@ export const MealPlanCalendar = ({
             minH="220px"
           >
             <Heading size="sm" color="teal.700">
-              {day.format('ddd, MMM D')}
+              {dateLabel}
             </Heading>
             {isToday && (
               <Badge colorScheme="teal" mt={1}>
-                Today
+                {t('mealPlanCalendar.today')}
               </Badge>
             )}
             <VStack align="stretch" spacing={3} mt={4}>
               {dayEntries.length === 0 ? (
                 <Text color="gray.400" fontSize="sm">
-                  No meals planned
+                  {t('mealPlanCalendar.noMeals')}
                 </Text>
               ) : (
                 dayEntries.map((entry) => (
@@ -93,11 +101,11 @@ export const MealPlanCalendar = ({
                           {entry.recipe.title}
                         </Text>
                         <Badge colorScheme="teal" width="fit-content">
-                          {entry.mealType}
+                          {t(`mealTypes.${entry.mealType}`, entry.mealType)}
                         </Badge>
                       </Stack>
                       <IconButton
-                        aria-label="Remove meal"
+                        aria-label={t('mealPlanCalendar.removeMeal')}
                         icon={<DeleteIcon />}
                         size="sm"
                         variant="ghost"
@@ -114,7 +122,7 @@ export const MealPlanCalendar = ({
                     >
                       {MEAL_STATUSES.map((status) => (
                         <option key={status} value={status}>
-                          {status.charAt(0).toUpperCase() + status.slice(1)}
+                          {t(`mealStatuses.${status}`, status)}
                         </option>
                       ))}
                     </Select>

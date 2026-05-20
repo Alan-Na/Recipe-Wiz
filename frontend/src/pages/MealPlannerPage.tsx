@@ -7,12 +7,10 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import dayjs from 'dayjs';
+import { useTranslation } from 'react-i18next';
 import type { RecipeDto } from '../types/api';
 import { useMealPlanning } from '../features/meal-planning/hooks/useMealPlanning';
-import {
-  getWeekStart,
-  getWeekDays,
-} from '../features/meal-planning/utils';
+import { getWeekStart, getWeekDays } from '../features/meal-planning/utils';
 import { WeekNavigator } from '../features/meal-planning/components/WeekNavigator';
 import { MealPlanCalendar } from '../features/meal-planning/components/MealPlanCalendar';
 import { SavedRecipesPanel } from '../features/meal-planning/components/SavedRecipesPanel';
@@ -25,6 +23,7 @@ export const MealPlannerPage = () => {
   const [removingEntryId, setRemovingEntryId] = useState<number | null>(null);
   const [isAddingMeal, setIsAddingMeal] = useState<boolean>(false);
   const toast = useToast();
+  const { t } = useTranslation();
 
   const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
 
@@ -38,17 +37,9 @@ export const MealPlannerPage = () => {
     updateMealStatus,
   } = useMealPlanning(weekStart);
 
-  const handlePreviousWeek = () => {
-    setWeekStart((prev) => getWeekStart(prev.subtract(7, 'day')));
-  };
-
-  const handleNextWeek = () => {
-    setWeekStart((prev) => getWeekStart(prev.add(7, 'day')));
-  };
-
-  const handleResetWeek = () => {
-    setWeekStart(getWeekStart(dayjs()));
-  };
+  const handlePreviousWeek = () => setWeekStart((prev) => getWeekStart(prev.subtract(7, 'day')));
+  const handleNextWeek = () => setWeekStart((prev) => getWeekStart(prev.add(7, 'day')));
+  const handleResetWeek = () => setWeekStart(getWeekStart(dayjs()));
 
   const handleAddMeal = async ({
     recipeId,
@@ -63,23 +54,21 @@ export const MealPlannerPage = () => {
     try {
       await addMeal({ recipeId, mealDate, mealType });
       toast({
-        title: 'Meal added to calendar',
+        title: t('mealPlanner.toast.mealAdded'),
         status: 'success',
         duration: 3000,
         isClosable: true,
       });
       setSelectedRecipe(null);
-    }
-    catch (error) {
+    } catch (error) {
       toast({
-        title: 'Failed to add meal',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('mealPlanner.toast.mealAddFailed'),
+        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
       });
-    }
-    finally {
+    } finally {
       setIsAddingMeal(false);
     }
   };
@@ -89,22 +78,20 @@ export const MealPlannerPage = () => {
     try {
       await updateMealStatus({ entryId, status });
       toast({
-        title: 'Meal status updated',
+        title: t('mealPlanner.toast.statusUpdated'),
         status: 'success',
         duration: 2500,
         isClosable: true,
       });
-    }
-    catch (error) {
+    } catch (error) {
       toast({
-        title: 'Failed to update status',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('mealPlanner.toast.statusFailed'),
+        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
       });
-    }
-    finally {
+    } finally {
       setProcessingEntryId(null);
     }
   };
@@ -114,22 +101,20 @@ export const MealPlannerPage = () => {
     try {
       await removeMeal(entryId);
       toast({
-        title: 'Meal removed from calendar',
+        title: t('mealPlanner.toast.mealRemoved'),
         status: 'success',
         duration: 2500,
         isClosable: true,
       });
-    }
-    catch (error) {
+    } catch (error) {
       toast({
-        title: 'Failed to remove meal',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('mealPlanner.toast.mealRemoveFailed'),
+        description: error instanceof Error ? error.message : t('mealPlanner.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
       });
-    }
-    finally {
+    } finally {
       setRemovingEntryId(null);
     }
   };
@@ -137,11 +122,8 @@ export const MealPlannerPage = () => {
   return (
     <>
       <Stack spacing={6} w="full">
-        <Heading color="teal.700">Meal Planner</Heading>
-        <Text color="gray.600">
-          Plan your week by assigning saved recipes to specific days and meal types. Update meal status as
-          you cook and stay in sync across all your devices.
-        </Text>
+        <Heading color="teal.700">{t('mealPlanner.pageTitle')}</Heading>
+        <Text color="gray.600">{t('mealPlanner.pageDescription')}</Text>
 
         <WeekNavigator
           weekStart={weekStart}

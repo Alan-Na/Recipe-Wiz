@@ -1,13 +1,17 @@
-import { Flex, HStack, Link as ChakraLink, Spacer, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Link as ChakraLink, Spacer, Text } from '@chakra-ui/react';
 import { NavLink, Outlet } from 'react-router-dom';
-
-const NAV_ITEMS = [
-  { label: 'Home', to: '/' },
-  { label: 'Recipe Search', to: '/recipes' },
-  { label: 'Meal Planner', to: '/meal-planner' },
-];
+import { useTranslation } from 'react-i18next';
 
 export const AppLayout = () => {
+  const { t, i18n } = useTranslation();
+  const isZh = i18n.language === 'zh';
+
+  const NAV_ITEMS = [
+    { label: t('nav.home'), to: '/' },
+    { label: t('nav.recipeSearch'), to: '/recipes' },
+    { label: t('nav.mealPlanner'), to: '/meal-planner' },
+  ];
+
   return (
     <Flex direction="column" minH="100vh" bg="gray.50">
       <Flex
@@ -40,6 +44,16 @@ export const AppLayout = () => {
               {item.label}
             </ChakraLink>
           ))}
+          <Button
+            size="sm"
+            variant="outline"
+            colorScheme="teal"
+            onClick={() => i18n.changeLanguage(isZh ? 'en' : 'zh')}
+            minW="60px"
+            fontWeight="semibold"
+          >
+            {isZh ? 'EN' : '中文'}
+          </Button>
         </HStack>
       </Flex>
       <Flex as="main" flex="1" px={{ base: 4, md: 10 }} py={8}>
@@ -47,7 +61,7 @@ export const AppLayout = () => {
       </Flex>
       <Flex as="footer" bg="white" py={6} justify="center" mt="auto" shadow="inner">
         <Text color="gray.500" fontSize="sm">
-          © {new Date().getFullYear()} Recipe Wiz. All rights reserved.
+          {t('footer.rights', { year: new Date().getFullYear() })}
         </Text>
       </Flex>
     </Flex>

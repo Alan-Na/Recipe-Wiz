@@ -14,7 +14,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import type { RecipeDto } from '../../../types/api';
 
 interface RecipeResultsProps {
@@ -25,8 +26,16 @@ interface RecipeResultsProps {
   onAdjust: (recipe: RecipeDto, servings: number) => void;
 }
 
-const ServingAdjustField = ({ defaultValue, onSubmit }: { defaultValue: number; onSubmit: (value: number) => void }) => {
+const ServingAdjustField = ({
+  defaultValue,
+  onSubmit,
+}: {
+  defaultValue: number;
+  onSubmit: (value: number) => void;
+}) => {
   const [value, setValue] = useState(String(defaultValue));
+  const { t } = useTranslation();
+
   useEffect(() => {
     setValue(String(defaultValue));
   }, [defaultValue]);
@@ -43,7 +52,7 @@ const ServingAdjustField = ({ defaultValue, onSubmit }: { defaultValue: number; 
           onSubmit(Number.isFinite(parsed) && parsed > 0 ? parsed : defaultValue);
         }}
       >
-        Update Servings
+        {t('recipeResults.updateServings')}
       </Button>
     </HStack>
   );
@@ -56,16 +65,13 @@ export const RecipeResults = ({
   onSave,
   onAdjust,
 }: RecipeResultsProps) => {
-  const highlightText = useMemo(
-    () => (text: string) => text.replace(/([A-Z])/g, ' $1').trim(),
-    [],
-  );
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
       <Box bg="white" borderRadius="xl" p={8} textAlign="center" shadow="sm">
         <Text color="teal.600" fontWeight="medium">
-          Searching for delicious recipes...
+          {t('recipeResults.searching')}
         </Text>
       </Box>
     );
@@ -74,10 +80,7 @@ export const RecipeResults = ({
   if (recipes.length === 0) {
     return (
       <Box bg="white" borderRadius="xl" p={8} textAlign="center" shadow="sm">
-        <Text color="gray.600">
-          Add ingredients and press search to discover matching recipes. Apply restrictions to tailor results
-          to your needs.
-        </Text>
+        <Text color="gray.600">{t('recipeResults.emptyHint')}</Text>
       </Box>
     );
   }
@@ -92,7 +95,7 @@ export const RecipeResults = ({
                 {recipe.title}
               </Heading>
               <Badge colorScheme="teal" fontSize="0.8em">
-                Servings: {recipe.servings}
+                {t('recipeResults.servings', { count: recipe.servings })}
               </Badge>
             </HStack>
             <Text mt={2} color="gray.600">
@@ -103,7 +106,7 @@ export const RecipeResults = ({
             <VStack align="stretch" spacing={3}>
               <Box>
                 <Text fontWeight="semibold" color="teal.600">
-                  Ingredients
+                  {t('recipeResults.ingredientsLabel')}
                 </Text>
                 <Text color="gray.600" mt={1}>
                   {recipe.ingredientLines.join(' • ')}
@@ -111,7 +114,7 @@ export const RecipeResults = ({
               </Box>
               <Box>
                 <Text fontWeight="semibold" color="teal.600">
-                  Instructions
+                  {t('recipeResults.instructionsLabel')}
                 </Text>
                 <Text color="gray.600" mt={1}>
                   {recipe.instructions}
@@ -119,14 +122,15 @@ export const RecipeResults = ({
               </Box>
               <Box>
                 <Text fontWeight="semibold" color="teal.600">
-                  Nutrition Overview
+                  {t('recipeResults.nutritionOverview')}
                 </Text>
                 <Text color="gray.600" mt={1}>
-                  {highlightText(`Calories ${recipe.nutrition.calories.toFixed(0)} kcal, Protein ${
-                    recipe.nutrition.protein
-                  } g, Fat ${recipe.nutrition.fat} g, Carbs ${
-                    recipe.nutrition.carbohydrates
-                  } g`)}
+                  {t('recipeResults.nutritionText', {
+                    calories: recipe.nutrition.calories.toFixed(0),
+                    protein: recipe.nutrition.protein,
+                    fat: recipe.nutrition.fat,
+                    carbs: recipe.nutrition.carbohydrates,
+                  })}
                 </Text>
               </Box>
             </VStack>
@@ -134,10 +138,10 @@ export const RecipeResults = ({
           <CardFooter justify="space-between" flexWrap="wrap" gap={4}>
             <HStack spacing={3}>
               <Button colorScheme="teal" variant="solid" onClick={() => onAnalyze(recipe)}>
-                Analyze Nutrition
+                {t('recipeResults.analyzeNutrition')}
               </Button>
               <Button variant="outline" colorScheme="teal" onClick={() => onSave(recipe)}>
-                Save Recipe
+                {t('recipeResults.saveRecipe')}
               </Button>
             </HStack>
             <ServingAdjustField

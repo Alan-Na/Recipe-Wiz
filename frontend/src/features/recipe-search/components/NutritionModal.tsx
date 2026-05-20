@@ -15,6 +15,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
+import { useTranslation } from 'react-i18next';
 
 interface NutritionModalProps {
   isOpen: boolean;
@@ -33,11 +34,15 @@ export const NutritionModal = ({
   isLoading,
   error,
 }: NutritionModalProps) => {
+  const { t } = useTranslation();
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg" isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Nutrition Analysis {recipeName ? `- ${recipeName}` : ''}</ModalHeader>
+        <ModalHeader>
+          {t('nutritionModal.title')}{recipeName ? ` - ${recipeName}` : ''}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           {isLoading ? (
@@ -47,7 +52,7 @@ export const NutritionModal = ({
           ) : error ? (
             <Text color="red.500">{error}</Text>
           ) : nutritionInfo.length === 0 ? (
-            <Text color="gray.600">No nutrition data returned for this recipe.</Text>
+            <Text color="gray.600">{t('nutritionModal.noData')}</Text>
           ) : (
             <List spacing={2}>
               {nutritionInfo.map((info) => (
@@ -60,7 +65,7 @@ export const NutritionModal = ({
           )}
         </ModalBody>
         <ModalFooter>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={onClose}>{t('nutritionModal.close')}</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

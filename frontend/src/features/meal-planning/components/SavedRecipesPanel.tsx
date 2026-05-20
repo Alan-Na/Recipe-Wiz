@@ -9,6 +9,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import type { RecipeDto } from '../../../types/api';
 
 interface SavedRecipesPanelProps {
@@ -18,6 +19,8 @@ interface SavedRecipesPanelProps {
 }
 
 export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPanelProps) => {
+  const { t } = useTranslation();
+
   return (
     <Box
       bg="white"
@@ -29,10 +32,10 @@ export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPan
       minW={{ base: 'full', lg: '320px' }}
     >
       <Heading size="md" color="teal.700">
-        Saved Recipes
+        {t('savedRecipesPanel.title')}
       </Heading>
       <Text fontSize="sm" color="gray.500" mt={2} mb={4}>
-        Select a recipe to add it to the weekly calendar.
+        {t('savedRecipesPanel.subtitle')}
       </Text>
       <Divider mb={4} />
       {isLoading ? (
@@ -40,7 +43,7 @@ export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPan
           <Spinner size="lg" color="teal.500" />
         </Stack>
       ) : recipes.length === 0 ? (
-        <Text color="gray.600">Save recipes from the search page to plan your week.</Text>
+        <Text color="gray.600">{t('savedRecipesPanel.empty')}</Text>
       ) : (
         <List spacing={3}>
           {recipes.map((recipe) => (
@@ -65,7 +68,7 @@ export const SavedRecipesPanel = ({ recipes, isLoading, onAdd }: SavedRecipesPan
                   onClick={() => onAdd(recipe)}
                   width="full"
                 >
-                  Add to Calendar
+                  {t('savedRecipesPanel.addToCalendar')}
                 </Button>
               </Box>
             </ListItem>

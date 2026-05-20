@@ -1,5 +1,7 @@
 # Recipe Wiz
 
+**English** | [中文](./README.zh.md)
+
 ## Project Overview
 
 Recipe Wiz is an innovative meal planning and recipe management application designed to simplify your cooking experience. It empowers users to discover recipes based on available ingredients, dietary preferences, or specific meal types. With features like nutritional analysis, a customizable meal planner, shopping list automation, and adjustable serving sizes, Recipe Wiz aims to make meal preparation both efficient and health-conscious.

@@ -14,6 +14,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { useState } from 'react';
 import { FaFilter } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 import { IngredientManager } from '../features/recipe-search/components/IngredientManager';
 import { RestrictionDrawer } from '../features/recipe-search/components/RestrictionDrawer';
 import { RecipeResults } from '../features/recipe-search/components/RecipeResults';
@@ -40,6 +41,7 @@ export const RecipeSearchPage = () => {
   const restrictionDrawer = useDisclosure();
   const nutritionModal = useDisclosure();
   const toast = useToast();
+  const { t } = useTranslation();
 
   const searchMutation = useMutation({
     mutationFn: async (payload: { ingredients: string[]; restrictions: SearchRestrictions }) => {
@@ -61,8 +63,8 @@ export const RecipeSearchPage = () => {
       setRecipes(data);
       if (data.length === 0) {
         toast({
-          title: 'No recipes found.',
-          description: 'Try different ingredients or relax your filters.',
+          title: t('recipeSearch.toast.notFound'),
+          description: t('recipeSearch.toast.notFoundDesc'),
           status: 'info',
           duration: 4000,
           isClosable: true,
@@ -71,8 +73,8 @@ export const RecipeSearchPage = () => {
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Recipe search failed',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('recipeSearch.toast.searchFailed'),
+        description: error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -84,8 +86,8 @@ export const RecipeSearchPage = () => {
     mutationFn: (recipe: RecipeDto) => saveRecipe(USER_ID, recipe),
     onSuccess: () => {
       toast({
-        title: 'Recipe saved',
-        description: 'You can now schedule it in the meal planner.',
+        title: t('recipeSearch.toast.saved'),
+        description: t('recipeSearch.toast.savedDesc'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -93,8 +95,8 @@ export const RecipeSearchPage = () => {
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Failed to save recipe',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('recipeSearch.toast.saveFailed'),
+        description: error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -104,10 +106,7 @@ export const RecipeSearchPage = () => {
 
   const adjustMutation = useMutation({
     mutationFn: async ({ recipe, servings }: { recipe: RecipeDto; servings: number }) => {
-      const updated = await adjustServings({
-        newServings: servings,
-        recipes: [recipe],
-      });
+      const updated = await adjustServings({ newServings: servings, recipes: [recipe] });
       return updated[0];
     },
     onSuccess: (updatedRecipe) => {
@@ -115,8 +114,8 @@ export const RecipeSearchPage = () => {
         prev.map((recipe) => (recipe.recipeId === updatedRecipe.recipeId ? updatedRecipe : recipe)),
       );
       toast({
-        title: 'Servings updated',
-        description: 'Ingredient quantities adjusted successfully.',
+        title: t('recipeSearch.toast.servingsUpdated'),
+        description: t('recipeSearch.toast.servingsUpdatedDesc'),
         status: 'success',
         duration: 3000,
         isClosable: true,
@@ -124,8 +123,8 @@ export const RecipeSearchPage = () => {
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Failed to adjust servings',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('recipeSearch.toast.servingsFailed'),
+        description: error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -137,8 +136,8 @@ export const RecipeSearchPage = () => {
     mutationFn: (recipe: RecipeDto) => analyzeNutrition(recipe),
     onError: (error: unknown) => {
       toast({
-        title: 'Nutrition analysis failed',
-        description: error instanceof Error ? error.message : 'Please try again later.',
+        title: t('recipeSearch.toast.nutritionFailed'),
+        description: error instanceof Error ? error.message : t('recipeSearch.toast.tryAgain'),
         status: 'error',
         duration: 4000,
         isClosable: true,
@@ -147,12 +146,7 @@ export const RecipeSearchPage = () => {
   });
 
   const handleAddIngredient = (ingredient: string) => {
-    setIngredients((prev) => {
-      if (prev.includes(ingredient)) {
-        return prev;
-      }
-      return [...prev, ingredient];
-    });
+    setIngredients((prev) => (prev.includes(ingredient) ? prev : [...prev, ingredient]));
   };
 
   const handleRemoveIngredient = (ingredient: string) => {
@@ -162,7 +156,7 @@ export const RecipeSearchPage = () => {
   const handleSearch = () => {
     if (ingredients.length === 0) {
       toast({
-        title: 'Add at least one ingredient',
+        title: t('recipeSearch.toast.addIngredient'),
         status: 'warning',
         duration: 3000,
         isClosable: true,
@@ -179,16 +173,22 @@ export const RecipeSearchPage = () => {
     nutritionMutation.mutate(recipe);
   };
 
+  const TAG_TYPE_KEYS = {
+    diet: t('recipeSearch.tagType.diet'),
+    health: t('recipeSearch.tagType.health'),
+    cuisine: t('recipeSearch.tagType.cuisine'),
+  };
+
   const appliedRestrictionTags = [
-    ...restrictions.diet.map((item) => ({ type: 'Diet', value: item })),
-    ...restrictions.health.map((item) => ({ type: 'Health', value: item })),
-    ...restrictions.cuisine.map((item) => ({ type: 'Cuisine', value: item })),
+    ...restrictions.diet.map((item) => ({ type: 'diet' as const, label: TAG_TYPE_KEYS.diet, value: item })),
+    ...restrictions.health.map((item) => ({ type: 'health' as const, label: TAG_TYPE_KEYS.health, value: item })),
+    ...restrictions.cuisine.map((item) => ({ type: 'cuisine' as const, label: TAG_TYPE_KEYS.cuisine, value: item })),
   ];
 
   return (
     <>
       <Stack w="full" spacing={6}>
-        <Heading color="teal.700">Recipe Search</Heading>
+        <Heading color="teal.700">{t('recipeSearch.pageTitle')}</Heading>
 
         <IngredientManager
           ingredients={ingredients}
@@ -209,21 +209,19 @@ export const RecipeSearchPage = () => {
           <HStack spacing={3} flexWrap="wrap">
             {appliedRestrictionTags.length === 0 ? (
               <Tag colorScheme="gray" variant="subtle">
-                No restrictions applied
+                {t('recipeSearch.noRestrictions')}
               </Tag>
             ) : (
               appliedRestrictionTags.map((tag) => (
                 <Tag key={`${tag.type}-${tag.value}`} colorScheme="teal" variant="subtle">
                   <TagLabel>
-                    {tag.type}: {tag.value}
+                    {tag.label}: {tag.value}
                   </TagLabel>
                   <TagCloseButton
                     onClick={() =>
                       setRestrictions((prev) => ({
                         ...prev,
-                        [tag.type.toLowerCase() as keyof SearchRestrictions]: prev[
-                          tag.type.toLowerCase() as keyof SearchRestrictions
-                        ].filter((value) => value !== tag.value),
+                        [tag.type]: prev[tag.type].filter((v) => v !== tag.value),
                       }))
                     }
                   />
@@ -238,15 +236,15 @@ export const RecipeSearchPage = () => {
               variant="outline"
               onClick={restrictionDrawer.onOpen}
             >
-              Filters
+              {t('recipeSearch.filtersButton')}
             </Button>
             <Button
               colorScheme="teal"
               onClick={handleSearch}
               isLoading={searchMutation.isPending}
-              loadingText="Searching"
+              loadingText={t('recipeSearch.searching')}
             >
-              Search Recipes
+              {t('recipeSearch.searchButton')}
             </Button>
           </HStack>
         </Flex>

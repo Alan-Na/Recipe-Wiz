@@ -1,0 +1,145 @@
+const zh = {
+  nav: {
+    home: '首页',
+    recipeSearch: '食谱搜索',
+    mealPlanner: '膳食计划',
+  },
+  footer: {
+    rights: '© {{year}} Recipe Wiz. 保留所有权利。',
+  },
+  frontPage: {
+    headline: '用 Recipe Wiz 规划餐食、发现食谱，让饮食更聪明。',
+    subheadline:
+      '我们将您喜爱的桌面端体验带到现代响应式 Web 上。立即搜索美味食谱，或开始构建您的本周膳食计划。',
+    exploreRecipes: '探索食谱',
+    openMealPlanner: '打开膳食计划',
+    featuresTitle: '您所需的一切，现已上线',
+    features: [
+      {
+        title: '智能食谱搜索',
+        description: '根据手边的食材发现食谱，并通过饮食过滤器精准筛选。',
+      },
+      {
+        title: '详细营养分析',
+        description: '在开始烹饪之前，了解卡路里和关键营养素。',
+      },
+      {
+        title: '个性化膳食计划',
+        description: '轻松规划整周餐食，保持健康饮食节奏。',
+      },
+      {
+        title: '份量灵活调整',
+        description: '一键放大或缩小食谱份量，食材比例自动重新计算。',
+      },
+    ],
+  },
+  recipeSearch: {
+    pageTitle: '食谱搜索',
+    noRestrictions: '未应用任何限制',
+    filtersButton: '筛选',
+    searchButton: '搜索食谱',
+    searching: '搜索中',
+    tagType: {
+      diet: '饮食',
+      health: '健康',
+      cuisine: '菜系',
+    },
+    toast: {
+      addIngredient: '请至少添加一种食材',
+      notFound: '未找到相关食谱。',
+      notFoundDesc: '请尝试不同的食材或放宽筛选条件。',
+      searchFailed: '食谱搜索失败',
+      saved: '食谱已保存',
+      savedDesc: '您现在可以在膳食计划中安排它。',
+      saveFailed: '保存食谱失败',
+      servingsUpdated: '份量已更新',
+      servingsUpdatedDesc: '食材用量已自动调整。',
+      servingsFailed: '调整份量失败',
+      nutritionFailed: '营养分析失败',
+      tryAgain: '请稍后再试。',
+    },
+  },
+  ingredientManager: {
+    label: '食材',
+    placeholder: '例如：鸡胸肉',
+    addButton: '添加',
+  },
+  recipeResults: {
+    searching: '正在搜索美味食谱…',
+    emptyHint: '添加食材并点击搜索以发现匹配食谱，可通过筛选条件缩小范围。',
+    servings: '份量：{{count}}',
+    ingredientsLabel: '食材',
+    instructionsLabel: '做法',
+    nutritionOverview: '营养概览',
+    nutritionText:
+      '热量 {{calories}} 千卡，蛋白质 {{protein}} 克，脂肪 {{fat}} 克，碳水 {{carbs}} 克',
+    analyzeNutrition: '营养分析',
+    saveRecipe: '保存食谱',
+    updateServings: '更新份量',
+  },
+  restrictionDrawer: {
+    title: '应用筛选条件',
+    dietLabels: '饮食标签',
+    healthLabels: '健康标签',
+    cuisineTypes: '菜系类型',
+    cancel: '取消',
+    apply: '应用',
+  },
+  nutritionModal: {
+    title: '营养分析',
+    noData: '该食谱暂无营养数据。',
+    close: '关闭',
+  },
+  mealPlanner: {
+    pageTitle: '膳食计划',
+    pageDescription:
+      '将已保存的食谱分配到每天的具体餐次，烹饪时随时更新状态，跨设备实时同步。',
+    toast: {
+      mealAdded: '餐食已加入日历',
+      mealAddFailed: '添加餐食失败',
+      statusUpdated: '餐食状态已更新',
+      statusFailed: '更新状态失败',
+      mealRemoved: '餐食已从日历移除',
+      mealRemoveFailed: '移除餐食失败',
+      tryAgain: '请稍后再试。',
+    },
+  },
+  weekNavigator: {
+    weekOf: '当前周：{{range}}',
+    today: '本周',
+    previousWeek: '上一周',
+    nextWeek: '下一周',
+  },
+  mealPlanCalendar: {
+    today: '今天',
+    noMeals: '暂无餐食安排',
+    removeMeal: '移除餐食',
+  },
+  savedRecipesPanel: {
+    title: '已保存食谱',
+    subtitle: '选择一个食谱将其添加到周历。',
+    empty: '前往食谱搜索页保存食谱，然后在这里规划您的一周饮食。',
+    addToCalendar: '加入日历',
+  },
+  addMealModal: {
+    title: '添加到膳食计划',
+    description: '将 <strong>{{name}}</strong> 添加到您的日历。',
+    mealDate: '用餐日期',
+    mealType: '餐次',
+    cancel: '取消',
+    addMeal: '添加餐食',
+  },
+  mealTypes: {
+    Breakfast: '早餐',
+    Lunch: '午餐',
+    Dinner: '晚餐',
+    Snack: '点心',
+  },
+  mealStatuses: {
+    planned: '已计划',
+    'in progress': '进行中',
+    completed: '已完成',
+  },
+} as const;
+
+export default zh;

@@ -12,6 +12,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IngredientManagerProps {
   ingredients: string[];
@@ -21,12 +22,11 @@ interface IngredientManagerProps {
 
 export const IngredientManager = ({ ingredients, onAdd, onRemove }: IngredientManagerProps) => {
   const [value, setValue] = useState('');
+  const { t } = useTranslation();
 
   const handleAdd = () => {
     const trimmed = value.trim();
-    if (!trimmed) {
-      return;
-    }
+    if (!trimmed) return;
     onAdd(trimmed);
     setValue('');
   };
@@ -42,17 +42,17 @@ export const IngredientManager = ({ ingredients, onAdd, onRemove }: IngredientMa
     <Box bg="white" borderRadius="xl" p={6} shadow="sm">
       <FormControl>
         <FormLabel fontWeight="semibold" color="teal.600">
-          Ingredients
+          {t('ingredientManager.label')}
         </FormLabel>
         <HStack spacing={4}>
           <Input
-            placeholder="e.g., chicken breast"
+            placeholder={t('ingredientManager.placeholder')}
             value={value}
             onChange={(event) => setValue(event.target.value)}
             onKeyDown={handleKeyDown}
           />
           <Button colorScheme="teal" onClick={handleAdd}>
-            Add
+            {t('ingredientManager.addButton')}
           </Button>
         </HStack>
       </FormControl>
